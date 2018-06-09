@@ -1,0 +1,2279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.0" last-position="798,288" last-zoom="0.85"
+	 default-owner="postgres">
+<database name="avoin_yleiskaava">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="yk_yleiskaava" rect-visible="true" fill-color="#ffaa00">
+	<role name="postgres"/>
+</schema>
+
+<table name="kaavaobjekti">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Presence of one or several HILUCS values in an area, indicated either as the percentage covered for each value or as the values listed in their order of importance. http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action?objectDetailId=10556]]></comment>
+	<position x="1800" y="820"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="geom" not-null="true">
+		<type name="geometry" length="0" spatial-type="GEOMETRY" variation="1" srid="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE - official name of the supplementary regulation - http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/SearchObjectSelection.action?search=specific+regulation+nature]]></comment>
+	</column>
+	<column name="muokkaaja">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="voimaantulopvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="kumoamispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="version_alkamispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="version_loppumispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="alueen_nro">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="aluevarauskohde">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="taydentava_kaavamerkinta">
+		<type name="boolean" length="0"/>
+		<comment><![CDATA[jos kaavaobjektilla ei ole kaavamaaraysta, niin se ei ole taydentava_kaavamerkinta eikä aluevarauskohde]]></comment>
+	</column>
+	<column name="kohde_periytyy_muualta">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="kansallinen_laillinen_sitovuus">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE - Legal nature of the land use regulation from a national perspective. On member state level the legal classification for plan regulations may be complex. A supplementary regulation may be principally "bindingOnlyForAuthorities" but according to national law this regulation have to be more specified to explain the specific degree of binding. (e.g. on state or regional planning level in Germany: principles of spatial planning, other spatial planning requirements or goals of spatial planning).]]></comment>
+	</column>
+	<constraint name="kaavaobjekti_pk" type="pk-constr" table="yk_yleiskaava.kaavaobjekti">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavakohteen_olemassaolo" index="17"/>
+		<object name="id_kaavaobjekti_luokka" index="20"/>
+		<object name="id_kansallinen_prosessin_vaihe" index="14"/>
+		<object name="id_kansallisen_kaavakohteen_olemassaolo" index="18"/>
+		<object name="id_kayttotakoitus" index="19"/>
+		<object name="id_laillinen_sitovuus" index="15"/>
+		<object name="id_prosessin_vaihe" index="16"/>
+		<object name="yleiskaava" index="13"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavakohteen_olemassaolo_fk" index="5"/>
+		<object name="kaavaobjekti_luokka_fk" index="8"/>
+		<object name="kansallinen_prosessin_vaihe_fk" index="2"/>
+		<object name="kansallisen_kaavakohteen_olemassaolo_fk" index="7"/>
+		<object name="kayttotakoitus_fk" index="6"/>
+		<object name="laillinen_sitovuus_fk" index="3"/>
+		<object name="prosessin_vaihe_fk" index="4"/>
+		<object name="yleiskaava_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="yleiskaava">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<position x="1840" y="440"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kaavan_ulkorajaus" not-null="true">
+		<type name="geometry" length="0" spatial-type="MULTIPOLYGON" variation="1" srid="0"/>
+	</column>
+	<column name="vaihtoehtoinen_nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="vireilletulopvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="voimaantulopvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="kumoamispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="version_alkamispvm">
+		<type name="date" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="version_loppumispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="muokkaaja">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="nro">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[yleiskaavan numero (esim. yk032)]]></comment>
+	</column>
+	<column name="oikeusvaikutus">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="kuntakoodi">
+		<type name="numeric" length="3" precision="0"/>
+	</column>
+	<constraint name="yleiskaava_pk" type="pk-constr" table="yk_yleiskaava.yleiskaava">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavan_taso" index="12"/>
+		<object name="id_kaavatyyppi" index="14"/>
+		<object name="id_kansallinen_prosessin_vaihe" index="13"/>
+		<object name="id_prosessin_vaihe" index="15"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavan_taso_fk" index="1"/>
+		<object name="kaavatyyppi_fk" index="3"/>
+		<object name="kansallinen_prosessin_vaihe_fk" index="2"/>
+		<object name="prosessin_vaihe_fk" index="4"/>
+	</customidxs>
+</table>
+
+<schema name="yk_kaavamaaraykset" rect-visible="true" fill-color="#000000">
+	<role name="postgres"/>
+</schema>
+
+<schema name="yk_koodiluettelot" rect-visible="true" fill-color="#aa0000">
+	<role name="postgres"/>
+</schema>
+
+<usertype name="plan_type_name_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+</usertype>
+
+<table name="kaavatyyppi">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Kaavatyypit siten kuin ne määritellään jäsenvaltioissa. Tässä koodiluettelossa hyväksytään mitkä tahansa tiedon tarjoajien määrittelemät arvot.]]></comment>
+	<position x="2940" y="520"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.plan_type_name_tyyppi" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="plan_type_name_pk" type="pk-constr" table="yk_koodiluettelot.kaavatyyppi">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="losp_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<enumeration values="infra_local,infra_regional,local,national,other,regional,supra_local,supra_regional"/>
+</usertype>
+
+<table name="kaavan_taso">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Kaavan aluehierarkia. http://inspire.ec.europa.eu/codelist/LevelOfSpatialPlanValue]]></comment>
+	<position x="2940" y="440"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.losp_tyyppi" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="level_of_spatial_plan_pk" type="pk-constr" table="yk_koodiluettelot.kaavan_taso">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="kansallinen_vaihe_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<enumeration values="vireilla_ja_valmistelussa,keskeytetty,oas_nahtavilla,luonnos_nahtavilla,ehdotus_nahtavilla,tarkistettu_ehdotus_nahtavilla,hyvaksytty_ehdotus,hyvaksytty_ehdotus_josta_valitettu,voimaankuulutettu_osin_tai_kokonaan"/>
+</usertype>
+
+<table name="kansallinen_prosessin_vaihe">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<position x="2940" y="760"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.kansallinen_vaihe_tyyppi" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="status_pk" type="pk-constr" table="yk_koodiluettelot.kansallinen_prosessin_vaihe">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="kaavadokumentti">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<position x="2440" y="140"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="lyhenne">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="paivays">
+		<type name="date" length="0"/>
+	</column>
+	<column name="spesifinen_referenssi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kartta_dokumentin_uri">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="selostus_dokumentin_uri">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="vaikutusarviointi_dokumentin_uri">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="kaavadokumentti_pk" type="pk-constr" table="yk_yleiskaava.kaavadokumentti">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="taustakartta">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Background Map Value - Information regarding the map that has been used as a background in the definition of a spatial plan, a zoning element or a supplementary regulation. Ks. Background Map Value - http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action;jsessionid=F05001FBEDB4246DD99D7D5C531E28A0?objectDetailId=10571]]></comment>
+	<position x="1340" y="200"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="lainvoimainen">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="taustakarttapvm">
+		<type name="date" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="taustakartta_referenssi">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="rajapinta_uri">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[Myös INSPIRE]]></comment>
+	</column>
+	<column name="vain_suunnittelu">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="kaavan_taustakartta_pk" type="pk-constr" table="yk_yleiskaava.taustakartta">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="yleismaarays">
+	<schema name="yk_kaavamaaraykset"/>
+	<role name="postgres"/>
+	<position x="3040" y="20"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="lyhenne">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="diaari_nro">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="voimaantulopvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="kumoamispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="taso">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="viite">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="paivays">
+		<type name="date" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="linkki">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="spesifinen_referenssi">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<constraint name="yleismaarays_pk" type="pk-constr" table="yk_kaavamaaraykset.yleismaarays">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavamaarays" index="12"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavamaarays_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="yleiskaava_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="yleiskaava"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<usertype name="hilucs_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Ks. kaikki arvot: http://inspire.ec.europa.eu/codelist/HILUCSValue/]]></comment>
+</usertype>
+
+<usertype name="hsrcl_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Ks. kaikki arvot: http://inspire.ec.europa.eu/codelist/SupplementaryRegulationValue]]></comment>
+	<enumeration values="after_zoning,agriculture,air_quality_management_zone,airport_activities,airport_easement,archeological_protection"/>
+</usertype>
+
+<usertype name="kayttotarkoitus_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<enumeration values="asuminen,keskustatoiminnot,palvelut,tyo_ja_tuotanto,virkistys,loma_asuminen,liikenne,erityisalue,suojelu,maa_ja_metsatalous,vesialueet"/>
+</usertype>
+
+<usertype name="kansallinen_hsrcl_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+</usertype>
+
+<usertype name="kaavaobjektin_lainvoimaisuus_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<enumeration values="lainvoimainen"/>
+</usertype>
+
+<schema name="yk_suunnitteluparametrit" rect-visible="true" fill-color="#0000ff">
+	<role name="postgres"/>
+</schema>
+
+<table name="sidonnaisuus">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="2000" y="2100"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="tyyppi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="sidonnaisuus_pk" type="pk-constr" table="yk_suunnitteluparametrit.sidonnaisuus">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="sidottu_kaavaobjekti">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="2000" y="1940"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="sidottu_kaavaobjekti_pk" type="pk-constr" table="yk_suunnitteluparametrit.sidottu_kaavaobjekti">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="sitova_kaavaobjekti">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="2000" y="2020"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="sitova_kaavaobjekti_pk" type="pk-constr" table="yk_suunnitteluparametrit.sitova_kaavaobjekti">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="sidottu_kaavaobjekti_has_one_kaavaobjekti" type="rel11"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.sidottu_kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="sitova_kaavaobjekti_has_one_kaavaobjekti" type="rel11"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.sitova_kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="sidottu_kaavaobjekti_has_many_sidonnaisuus" type="rel1n"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_suunnitteluparametrit.sidottu_kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.sidonnaisuus"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="sitova_kaavaobjekti_has_many_sidonnaisuus" type="rel1n"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_suunnitteluparametrit.sitova_kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.sidonnaisuus"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="mittakaava">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="1360" y="1920"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="oletus">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="minimi">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="maksimi">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="mittakaava_pk" type="pk-constr" table="yk_suunnitteluparametrit.mittakaava">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="ei_sitova_tavoiteaika">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="1360" y="2080"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="pvm">
+		<type name="date" length="0"/>
+	</column>
+	<constraint name="ei_sitova_tavoiteaika_pk" type="pk-constr" table="yk_suunnitteluparametrit.ei_sitova_tavoiteaika">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="ei_sitova_tavoiteaika_has_one_kaavaobjekti" type="rel11"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.ei_sitova_tavoiteaika"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="tukes_vyohyke">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="1300" y="1780"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="geom">
+		<type name="geometry" length="0" spatial-type="MULTIPOLYGON" variation="1" srid="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="tukes_vyohyke_pk" type="pk-constr" table="yk_suunnitteluparametrit.tukes_vyohyke">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="yleiskaava" index="4"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="yleiskaava_fk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="yleiskaava_has_many_tukes_vyohyke" type="rel1n"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_suunnitteluparametrit.tukes_vyohyke"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<schema name="yk_kuvaustekniikka" rect-visible="true" fill-color="#aaff00">
+	<role name="postgres"/>
+</schema>
+
+<table name="teema">
+	<schema name="yk_kuvaustekniikka"/>
+	<role name="postgres"/>
+	<position x="880" y="420"/>
+	<column name="id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="sld_url">
+		<type name="varchar" length="0"/>
+	</column>
+</table>
+
+<relationship name="yleiskaava_has_many_teema" type="rel1n"
+	 src-col-pattern="{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_kuvaustekniikka.teema"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<schema name="yk_prosessi" rect-visible="true" fill-color="#00aa00">
+	<role name="postgres"/>
+</schema>
+
+<usertype name="dokumentti_tyyppi" configuration="enumeration">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<enumeration values="kaupunkiseudun_rakennesuunnitelma,ohjelma,oas,vat_tavoite,tiedotus,oas_palaute,kaavaluonnos_mielipide,kaavaehdotus_muistutus,kaavaehdotus_lausunto,kaavaehdotus_viranomaisneuvottelu,paatos,valitus_ho,valitus_kho,suunnitelma,selvitys,inventointi,visio,vaikutusarvio"/>
+</usertype>
+
+<table name="dokumentti">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<position x="360" y="740"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="tyyppi">
+		<type name="yk_prosessi.dokumentti_tyyppi" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="inspire_paatos">
+		<type name="bool" length="0"/>
+	</column>
+	<constraint name="dokumentti_pk" type="pk-constr" table="yk_prosessi.dokumentti">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="lahtoaineisto">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<position x="380" y="600"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="lahtoaineisto_pk" type="pk-constr" table="yk_prosessi.lahtoaineisto">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="linkitys_tyyppi" configuration="enumeration">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<enumeration values="selma,donna,mml,mil,maakuntien_liitto,tukes,museovirasto,syke"/>
+</usertype>
+
+<table name="ulko_linkitys">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<comment><![CDATA[linkkidata on koneluettavassa mutta ei välttämättä ihmisen luettavassa muodossa, jonka tarkka muoto riippuu erikseen tietomallia varten luotavasta spesifikaatiosta]]></comment>
+	<position x="0" y="760"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="tyyppi">
+		<type name="yk_prosessi.linkitys_tyyppi" length="0"/>
+	</column>
+	<column name="linkki_data">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="linkitys_pk" type="pk-constr" table="yk_prosessi.ulko_linkitys">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="lahtoaineisto_has_one_linkitys" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_prosessi.ulko_linkitys"
+	 dst-table="yk_prosessi.lahtoaineisto"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="dokumentti_has_one_linkitys" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_prosessi.ulko_linkitys"
+	 dst-table="yk_prosessi.dokumentti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="dokumentti_yleiskaava_linkki">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<position x="820" y="780"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="dokumentti_yleiskaava_linkki_pk" type="pk-constr" table="yk_prosessi.dokumentti_yleiskaava_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="lahtoaineisto_yleiskaava_linkki">
+	<schema name="yk_prosessi"/>
+	<role name="postgres"/>
+	<position x="780" y="620"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="dokumentti_yleiskaava_linkki_pk_1" type="pk-constr" table="yk_prosessi.lahtoaineisto_yleiskaava_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<schema name="yk_mitoitus_varanto" rect-visible="true" fill-color="#ffff00">
+	<role name="postgres"/>
+</schema>
+
+<table name="kansallinen_taydentava_kaavamerkinta_luokka">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<position x="2940" y="1000"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.kansallinen_hsrcl_tyyppi" length="0"/>
+		<comment><![CDATA[esim. AP, TY-1]]></comment>
+	</column>
+	<column name="laajempi_koodiarvo">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="maankaytto_tyyppi_pk" type="pk-constr" table="yk_koodiluettelot.kansallinen_taydentava_kaavamerkinta_luokka">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="kaavakohde_luokka">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[http://inspire.ec.europa.eu/codelist/SupplementaryRegulationValue]]></comment>
+	<position x="2940" y="920"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.hilucs_tyyppi" length="0"/>
+	</column>
+	<column name="laajempi_koodiarvo">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="HSRCL_pk_2" type="pk-constr" table="yk_koodiluettelot.kaavakohde_luokka">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="taydentava_kaavamerkinta_luokka">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[http://inspire.ec.europa.eu/codelist/SupplementaryRegulationValue]]></comment>
+	<position x="2940" y="1080"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.hsrcl_tyyppi" length="0"/>
+	</column>
+	<column name="laajempi_koodiarvo">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="HSRCL_pk_1" type="pk-constr" table="yk_koodiluettelot.taydentava_kaavamerkinta_luokka">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="yleiskaava_has_many_taustakartta" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_yleiskaava.taustakartta"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_taustakartta" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_yleiskaava.taustakartta"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<schema name="yk_metatiedot" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+</schema>
+
+<table name="metatietokortti">
+	<schema name="yk_metatiedot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[http://www.jhs-suositukset.fi/suomi/jhs158 - Paikkatietoaineistojen ja -palveluiden metatiedot]]></comment>
+	<position x="800" y="60"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="metatiedon_tunnistamistiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="resurssin_tunnistamistiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="tietosisalto">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="sovellusskeeman_tiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="sijaintitiedon_esitystapatiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="vertausjarjestelman_tiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="laatutiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="esitystapaluettelon_tiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="rajoitustiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="jakelutiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="yllapitotiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kattavuustiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="viitetiedot_ja_vastuullinen_osapuoli">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="metatietokortti_pk" type="pk-constr" table="yk_metatiedot.metatietokortti">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="diaari_numerot">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<position x="2380" y="340"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nro">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="pvm">
+		<type name="date" length="0"/>
+	</column>
+	<constraint name="diaari_numerot_pk" type="pk-constr" table="yk_yleiskaava.diaari_numerot">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="yleiskaava_has_many_diaari_numerot" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_yleiskaava.diaari_numerot"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="metatietokortti_has_one_yleiskaava" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_metatiedot.metatietokortti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<usertype name="virkistys_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<enumeration values="kaupunkipuisto,lahivirkistys,maisema_luonnonhoito_alue,urheilu_virkistyspalvelu_alue,muu"/>
+</usertype>
+
+<table name="virkistysalue_tyyppi">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<position x="2940" y="1320"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.virkistys_tyyppi" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="virkistysalue_tyyppi_pk" type="pk-constr" table="yk_koodiluettelot.virkistysalue_tyyppi">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="virkistysalue">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<position x="3000" y="1780"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="geom">
+		<type name="geometry" length="0" spatial-type="MULTIPOLYGON" variation="1" srid="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="virkistysalue_pk" type="pk-constr" table="yk_mitoitus_varanto.virkistysalue">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="virkistysalue_has_many_lahtoaineisto_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.virkistysalue"
+	 dst-table="yk_prosessi.lahtoaineisto_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_lahtoaineisto_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_prosessi.lahtoaineisto_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="yleiskaava_has_many_lahtoaineisto_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_prosessi.lahtoaineisto_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="yleiskaava_has_many_dokumentti_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_prosessi.dokumentti_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavoitus_taso_has_many_yleiskaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kaavan_taso"
+	 dst-table="yk_yleiskaava.yleiskaava"
+	 src-required="true" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="status_has_many_yleiskaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kansallinen_prosessin_vaihe"
+	 dst-table="yk_yleiskaava.yleiskaava"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavan_tyyppi_has_many_yleiskaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kaavatyyppi"
+	 dst-table="yk_yleiskaava.yleiskaava"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="status_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kansallinen_prosessin_vaihe"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_mittakaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.mittakaava"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="yleiskaava_has_many_mittakaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_suunnitteluparametrit.mittakaava"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="seuranta_lahtodata_linkki">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Yhdistää kaavaobjektin seuranta-järjestelmän tietokannan taulujen rivit vastaaviin kaavaobjekteihin]]></comment>
+	<position x="3320" y="2000"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="kaavioiden_sijaintpisteet_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="seuranta_alueet_kartalla_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="seuranta_alueet_ulkorajaus_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="seuranta_alueet_laskenta">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="seuranta_lahtodata_linkki_pk" type="pk-constr" table="yk_mitoitus_varanto.seuranta_lahtodata_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="seuranta_maa_ala_linkki">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Yhdistää kaavaobjektin seuranta-järjestelmän tietokannan taulujen rivit vastaaviin kaavaobjekteihin]]></comment>
+	<position x="3320" y="2260"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="ak_kaavatilanne_tamperedbsta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="kaavioiden_sijaintipisteet_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="rakennusalueet_alueina_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_seuranta_alueille_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="seuranta_alueet_kartalla_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="seuranta_alueet_laskenta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<constraint name="seuranta_lahtodata_linkki_pk_5" type="pk-constr" table="yk_mitoitus_varanto.seuranta_maa_ala_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="seuranta_vaesto_linkki">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Yhdistää kaavaobjektin seuranta-järjestelmän tietokannan taulujen rivit vastaaviin kaavaobjekteihin]]></comment>
+	<position x="2860" y="2000"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="ak_kaavatyot_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ohjeelliset_tontit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="rekisteritontit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="ruudukko_seuranta_alueille_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="tontinjakotontit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="vaesto_oraclesta_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="seuranta_alueet_kartalla_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="seuranta_alueet_laskenta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="vaesto_poikkileikkaus_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="yleiskaavan_hyvaksytty_varanto_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="yleiskaavan_vireilla_oleva_varanto_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="seuranta_lahtodata_linkki_pk_4" type="pk-constr" table="yk_mitoitus_varanto.seuranta_vaesto_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="seuranta_poikkileikkaukset_linkki">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Yhdistää kaavaobjektin seuranta-järjestelmän tietokannan taulujen rivit vastaaviin kaavaobjekteihin]]></comment>
+	<position x="2760" y="2240"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="lahipalvelut_ruudukko_21022018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="lahipalvelut_seuranta_alueet_laskenta_21022018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="maa_ala_ruudukko_11012018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="maa_ala_ruudukko_21022018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="maa_ala_seuranta_alueet_laskenta_11012018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="maa_ala_seuranta_alueet_laskenta_21022018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="vaesto_ruudukko_11012018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="vaesto_ruudukko_21022018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="vaesto_ruudukko_25102017_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="vaesto_seuranta_alueet_laskenta_11012018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="vaesto_seuranta_alueet_laskenta_21022018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="vaesto_seuranta_alueet_laskenta_25102017_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_ruudukko_11012018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_ruudukko_01112017_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_ruudukko_21022018_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_ruudukko_26102017_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_seuranta_alueet_laskenta_01112017_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_seuranta_alueet_laskenta_11012018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_seuranta_alueet_laskenta_21022018_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="varanto_rakentaminen_seuranta_alueet_laskenta_26102017_id">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="seuranta_lahtodata_linkki_pk_3" type="pk-constr" table="yk_mitoitus_varanto.seuranta_poikkileikkaukset_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="seuranta_varanto_rakentaminen_linkki">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Yhdistää kaavaobjektin seuranta-järjestelmän tietokannan taulujen rivit vastaaviin kaavaobjekteihin]]></comment>
+	<position x="2400" y="2000"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="ak_kaavatyot_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ohjeelliset_tontit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="rakennukset_alueina_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="rekisteritontit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="tontinjakotontit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="yleiskaavan_hyvaksytty_varanto_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_seuranta_alueilla_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="seuranta_alueet_kartalla_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="yleiskaavan_vireilla_oleva_varanto_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="seuranta_alueet_laskenta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="seuranta_lahtodata_linkki_pk_2" type="pk-constr" table="yk_mitoitus_varanto.seuranta_varanto_rakentaminen_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="seuranta_lahipalvelut_linkki">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Yhdistää kaavaobjektin seuranta-järjestelmän tietokannan taulujen rivit vastaaviin kaavaobjekteihin]]></comment>
+	<position x="2400" y="2240"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="kirjastot_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="koulut_orcalesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="neuvolat_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="paivakodit_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ruudukko_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="yksityiset_laakariasemat_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="ruudukko_seuranta_alueilla">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="seuranta_alueet_kartalla_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="seuranta_alueet_laskenta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="terveysasemat_oraclesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="tk_toimipaikat_syksy2015_old">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="tk_toimipaikat_testi_old_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="yleiset_alueet_iriksesta_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="toimipaikkarekisteri_id">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="seuranta_lahtodata_linkki_pk_1" type="pk-constr" table="yk_mitoitus_varanto.seuranta_lahipalvelut_linkki">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<schema name="yk_kaavoitus_yhteydet" rect-visible="true" fill-color="#aaff00">
+	<role name="postgres"/>
+</schema>
+
+<table name="liikennejarjestelma_suunnnitelma">
+	<schema name="yk_kaavoitus_yhteydet"/>
+	<role name="postgres"/>
+	<position x="700" y="1280"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nro" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="liikenne_jarjestelma_suunnnitelma_pk" type="pk-constr" table="yk_kaavoitus_yhteydet.liikennejarjestelma_suunnnitelma">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="liikenne_jarjestelma_suunnnitelma_has_many_dokumentti_yleiskaav" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_kaavoitus_yhteydet.liikennejarjestelma_suunnnitelma"
+	 dst-table="yk_prosessi.dokumentti_yleiskaava_linkki"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="liikenne_jarjestelma_suunnnitelma_has_many_lahtoaineisto_yleisk" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_kaavoitus_yhteydet.liikennejarjestelma_suunnnitelma"
+	 dst-table="yk_prosessi.lahtoaineisto_yleiskaava_linkki"
+	 src-required="false" dst-required="false"/>
+
+<table name="liittyva_kaava">
+	<schema name="yk_kaavoitus_yhteydet"/>
+	<role name="postgres"/>
+	<position x="680" y="1120"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nro" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="kaava_pk" type="pk-constr" table="yk_kaavoitus_yhteydet.liittyva_kaava">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavan_taso" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavan_taso_fk" index="1"/>
+	</customidxs>
+</table>
+
+<usertype name="kaava_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<enumeration values="maakuntakaava,yleiskaava,asemakaava,osayleiskaava,rantayleiskaava,muu"/>
+</usertype>
+
+<relationship name="kaava_taso_has_many_kaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kaavan_taso"
+	 dst-table="yk_kaavoitus_yhteydet.liittyva_kaava"
+	 src-required="false" dst-required="false"/>
+
+<table name="suhde_maan_tasoon">
+	<schema name="yk_suunnitteluparametrit"/>
+	<role name="postgres"/>
+	<position x="1360" y="2180"/>
+	<column name="id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="taso">
+		<type name="smallint" length="0"/>
+		<comment><![CDATA[maan alla < 0, maantasolla = 0, maan päällä > 0, ei määritelty = null]]></comment>
+	</column>
+</table>
+
+<relationship name="suhde_maan_tasoon_has_one_kaavaobjekti" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_suunnitteluparametrit.suhde_maan_tasoon"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="kaava_has_many_dokumentti_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_kaavoitus_yhteydet.liittyva_kaava"
+	 dst-table="yk_prosessi.dokumentti_yleiskaava_linkki"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="yleiskaava_has_many_liikenne_jarjestelma_suunnnitelma" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_kaavoitus_yhteydet.liikennejarjestelma_suunnnitelma"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="virkistysalue_tyyppi_has_many_virkistysalue" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.virkistysalue_tyyppi"
+	 dst-table="yk_mitoitus_varanto.virkistysalue"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="lahtoaineisto_yleiskaava_linkki_has_many_tukes_vyohyke" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_prosessi.lahtoaineisto_yleiskaava_linkki"
+	 dst-table="yk_suunnitteluparametrit.tukes_vyohyke"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="lahtoaineisto_has_many_lahtoaineisto_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_prosessi.lahtoaineisto"
+	 dst-table="yk_prosessi.lahtoaineisto_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="dokumentti_has_many_dokumentti_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_prosessi.dokumentti"
+	 dst-table="yk_prosessi.dokumentti_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<usertype name="regulation_nature_vaiue_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+</usertype>
+
+<table name="laillinen_sitovuus">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Kaavamääräysten laillinen sitovuus. http://inspire.ec.europa.eu/codelist/RegulationNatureValue]]></comment>
+	<position x="2940" y="600"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="yk_koodiluettelot.regulation_nature_vaiue_tyyppi" length="0"/>
+	</column>
+	<constraint name="laillinen_sitovuus_pk" type="pk-constr" table="yk_koodiluettelot.laillinen_sitovuus">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="kaavan_tyyppi_has_many_liittyva_kaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kaavatyyppi"
+	 dst-table="yk_kaavoitus_yhteydet.liittyva_kaava"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<usertype name="process_step_general_value_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Kaavaprosessin yleispiirteinen vaihe, jossa kaava on. http://inspire.ec.europa.eu/codelist/ProcessStepGeneralValue]]></comment>
+</usertype>
+
+<table name="prosessin_vaihe">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Kaavaprosessin yleispiirteinen vaihe, jossa kaava on. http://inspire.ec.europa.eu/codelist/ProcessStepGeneralValue]]></comment>
+	<position x="2940" y="680"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="yk_koodiluettelot.process_step_general_value_tyyppi" length="0"/>
+	</column>
+	<constraint name="prosessin_vaihe_pk" type="pk-constr" table="yk_koodiluettelot.prosessin_vaihe">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="laillinen_sitovuus_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.laillinen_sitovuus"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="prosessin_vaihe_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.prosessin_vaihe"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="prosessin_vaihe_has_many_yleiskaava" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.prosessin_vaihe"
+	 dst-table="yk_yleiskaava.yleiskaava"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="paatos">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Ordinance - Reference to administrative ordinance. Ordinance is a regulation/rule that is adopted by an authority that is legally mandated to take such ordinance. http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action;jsessionid=F05001FBEDB4246DD99D7D5C531E28A0?objectDetailId=10561]]></comment>
+	<position x="1400" y="740"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="paatospvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="paatos_referenssi">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="paatos_pk" type="pk-constr" table="yk_yleiskaava.paatos">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="paatos_has_many_dokumentti_yleiskaava_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.paatos"
+	 dst-table="yk_prosessi.dokumentti_yleiskaava_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="yleiskaava_has_many_paatos" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_yleiskaava.paatos"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="kaavamaarays">
+	<schema name="yk_kaavamaaraykset"/>
+	<role name="postgres"/>
+	<comment><![CDATA[http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/SearchObjectSelection.action?search=Official+Documentation]]></comment>
+	<position x="3040" y="280"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+		<comment><![CDATA[http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/SearchObjectSelection.action?search=Official+Documentation]]></comment>
+	</column>
+	<column name="maaraysteksti">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="teema">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kaavamaarays_url">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="virallinen_dokumentaatio_pk" type="pk-constr" table="yk_kaavamaaraykset.kaavamaarays">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavaobjekti" index="3"/>
+		<object name="id_yleiskaava" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavaobjekti_fk" index="2"/>
+		<object name="yleiskaava_fk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="yleiskaava_has_many_virallinen_dokumentaatio" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.yleiskaava"
+	 dst-table="yk_kaavamaaraykset.kaavamaarays"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="virallinen_dokumentaatio_has_many_kaavadokumentti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_kaavamaaraykset.kaavamaarays"
+	 dst-table="yk_yleiskaava.kaavadokumentti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="virallinen_dokumentaatio_has_many_yleismaarays" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_kaavamaaraykset.kaavamaarays"
+	 dst-table="yk_kaavamaaraykset.yleismaarays"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="kaavaobjektia_koskeva_maarays">
+	<schema name="yk_kaavamaaraykset"/>
+	<role name="postgres"/>
+	<position x="3380" y="20"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="lyhenne">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kuvaus">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="diaari_nro">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="voimaantulopvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="kumoamispvm">
+		<type name="date" length="0"/>
+	</column>
+	<column name="taso">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="viite">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="paivays">
+		<type name="date" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="linkki">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="spesifinen_referenssi">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="karttamerkinta">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="huomio">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="yleismaarays_pk_1" type="pk-constr" table="yk_kaavamaaraykset.kaavaobjektia_koskeva_maarays">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavamaarays" index="12"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavamaarays_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="kaavamaarays_has_many_kaavaobjektia_koskeva_maarays" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_kaavamaaraykset.kaavamaarays"
+	 dst-table="yk_kaavamaaraykset.kaavaobjektia_koskeva_maarays"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_kaavamaarays" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_kaavamaaraykset.kaavamaarays"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<usertype name="kansallinen_hilucs_tyyppi" configuration="enumeration">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+</usertype>
+
+<table name="kansallinen_kaavakohde_luokka">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<comment><![CDATA[YM tekemässä näitä, mutta ei vielä saatavilla]]></comment>
+	<position x="2940" y="840"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="yk_koodiluettelot.kansallinen_hsrcl_tyyppi" length="0"/>
+	</column>
+	<column name="laajempi_koodiarvo">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="kansallinen_kaavakohde_luokka_pk" type="pk-constr" table="yk_koodiluettelot.kansallinen_kaavakohde_luokka">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<schema name="yk_inspire" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+</schema>
+
+<table name="kaavakohde">
+	<schema name="yk_inspire"/>
+	<role name="postgres"/>
+	<position x="3520" y="780"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="kaavakohde_pk" type="pk-constr" table="yk_inspire.kaavakohde">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="kansallinen_kaavakohde">
+	<schema name="yk_inspire"/>
+	<role name="postgres"/>
+	<position x="3520" y="680"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="kansallinen_kaavakohde_pk" type="pk-constr" table="yk_inspire.kansallinen_kaavakohde">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="kansallinen_taydentava_kaavamerkinta">
+	<schema name="yk_inspire"/>
+	<role name="postgres"/>
+	<position x="3520" y="880"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="kaavakohde_pk_2" type="pk-constr" table="yk_inspire.kansallinen_taydentava_kaavamerkinta">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kansallinen_taydentava_kaavamerkinta_luokka" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kansallinen_taydentava_kaavamerkinta_luokka_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="kansallinen_taydentava_kaavamerkinta_luokka_has_many_kansalline" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kansallinen_taydentava_kaavamerkinta_luokka"
+	 dst-table="yk_inspire.kansallinen_taydentava_kaavamerkinta"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_kansallinen_taydentava_kaavamerkinta" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_inspire.kansallinen_taydentava_kaavamerkinta"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="taydentava_kaavamerkinta">
+	<schema name="yk_inspire"/>
+	<role name="postgres"/>
+	<position x="3520" y="980"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="kaavakohde_pk_1" type="pk-constr" table="yk_inspire.taydentava_kaavamerkinta">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_taydentava_kaavamerkinta_luokka" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="taydentava_kaavamerkinta_luokka_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="taydentava_kaavamerkinta_luokka_has_many_taydentava_kaavamerkin" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.taydentava_kaavamerkinta_luokka"
+	 dst-table="yk_inspire.taydentava_kaavamerkinta"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_taydentava_kaavamerkinta" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_inspire.taydentava_kaavamerkinta"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="mitoitus">
+	<schema name="yk_mitoitus_varanto"/>
+	<role name="postgres"/>
+	<comment><![CDATA[http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action;jsessionid=F05001FBEDB4246DD99D7D5C531E28A0?objectDetailId=10573]]></comment>
+	<position x="2400" y="1800"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="mitoitus_referenssi">
+		<type name="smallint" length="0"/>
+		<comment><![CDATA[INSPIRE]]></comment>
+	</column>
+	<column name="pinta_ala">
+		<type name="real" length="0"/>
+		<comment><![CDATA[m2]]></comment>
+	</column>
+	<constraint name="mitoitus_pk" type="pk-constr" table="yk_mitoitus_varanto.mitoitus">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavaobjekti" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavaobjekti_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="kaavaobjekti_has_many_mitoitus" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_mitoitus_varanto.mitoitus"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_virkistysalue" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.virkistysalue"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_seuranta_varanto_rakentaminen_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.seuranta_varanto_rakentaminen_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_seuranta_lahipalvelut_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.seuranta_lahipalvelut_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_seuranta_vaesto_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.seuranta_vaesto_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_seuranta_poikkileikkaukset_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.seuranta_poikkileikkaukset_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_seuranta_lahtodata_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.seuranta_lahtodata_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="mitoitus_has_many_seuranta_maa_ala_linkki" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_mitoitus_varanto.mitoitus"
+	 dst-table="yk_mitoitus_varanto.seuranta_maa_ala_linkki"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="kaavakohteen_olemassaolo">
+	<schema name="yk_inspire"/>
+	<role name="postgres"/>
+	<comment><![CDATA[HILUCS Presence - http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action?objectDetailId=10556]]></comment>
+	<position x="3520" y="1180"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="jarjestetty_lista">
+		<type name="smallint" length="0" dimension="1"/>
+	</column>
+	<column name="prosentti_lista">
+		<type name="real" length="0" dimension="1"/>
+	</column>
+	<constraint name="kaavakohteen_olemassaolo_pk" type="pk-constr" table="yk_inspire.kaavakohteen_olemassaolo">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="kansallisen_kaavakohteen_olemassaolo">
+	<schema name="yk_inspire"/>
+	<role name="postgres"/>
+	<comment><![CDATA[HILUCS Presence - http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action?objectDetailId=10556]]></comment>
+	<position x="3520" y="1080"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="jarjestetty_lista">
+		<type name="smallint" length="0" dimension="1"/>
+	</column>
+	<column name="prosentti_lista">
+		<type name="real" length="0" dimension="1"/>
+	</column>
+	<constraint name="kansallisen_kaavakohteen_olemassaolo_pk" type="pk-constr" table="yk_inspire.kansallisen_kaavakohteen_olemassaolo">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="kaavakohteen_olemassaolo_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_inspire.kaavakohteen_olemassaolo"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_kansallinen_kaavakohde" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_inspire.kansallinen_kaavakohde"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavaobjekti_has_many_kaavakohde" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_inspire.kaavakohde"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kansallinen_kaavakohde_luokka_has_many_kansallinen_kaavakohde" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kansallinen_kaavakohde_luokka"
+	 dst-table="yk_inspire.kansallinen_kaavakohde"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kaavakohde_luokka_has_many_kaavakohde" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kaavakohde_luokka"
+	 dst-table="yk_inspire.kaavakohde"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="kayttotakoitus">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<position x="2940" y="1160"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="varikoodi">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="kayttotakoitus_pk" type="pk-constr" table="yk_koodiluettelot.kayttotakoitus">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="kayttotakoitus_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kayttotakoitus"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<relationship name="kansallisen_kaavakohteen_olemassaolo_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_inspire.kansallisen_kaavakohteen_olemassaolo"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="kaavaobjekti_luokka">
+	<schema name="yk_koodiluettelot"/>
+	<role name="postgres"/>
+	<position x="2940" y="1240"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="koodi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="alkup_taulun_nimi">
+		<type name="varchar" length="0"/>
+		<comment><![CDATA[tietojen siirtoa&hyödyntämistä varten esim. Tampereen yk2040_19122017- ja yk048_0401_2018-kannoista]]></comment>
+	</column>
+	<constraint name="kaavaobjekti_luokka_pk" type="pk-constr" table="yk_koodiluettelot.kaavaobjekti_luokka">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="kaavaobjekti_luokka_has_many_kaavaobjekti" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_koodiluettelot.kaavaobjekti_luokka"
+	 dst-table="yk_yleiskaava.kaavaobjekti"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+<table name="kaavaobjekti_lisatiedot">
+	<schema name="yk_yleiskaava"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Presence of one or several HILUCS values in an area, indicated either as the percentage covered for each value or as the values listed in their order of importance. http://inspire-regadmin.jrc.ec.europa.eu/dataspecification/ScopeObjectDetail.action?objectDetailId=10556]]></comment>
+	<position x="1400" y="920"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="alue_nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kohde_nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="katuosoite">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="leveys_liikenne">
+		<type name="real" length="0"/>
+	</column>
+	<column name="pituus_km">
+		<type name="real" length="0"/>
+	</column>
+	<column name="vaylan_nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="pysakki">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="alue_nro">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="kohde_nro">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="palvelualue">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="rakennusoikeus">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="lahde">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="laji">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="mj_tyyppi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="mj_tyypinrakenne">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="ajoitus">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="mj_tunnus">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="laitos">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="vyohykeleveys">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="kohde">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="uoman_nimi">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="ymparistot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="valuma_alue">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="uoman_pituus">
+		<type name="real" length="0"/>
+	</column>
+	<column name="purku_paikka">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="saast_syy">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="toimenpiteet">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="saast_kuva">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="lisatiedot">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="selvitystarve">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="yk_tilanne">
+		<type name="varchar" length="0"/>
+	</column>
+	<column name="ak_tilanne">
+		<type name="varchar" length="0"/>
+	</column>
+	<constraint name="kaavaobjekti_pk_1" type="pk-constr" table="yk_yleiskaava.kaavaobjekti_lisatiedot">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_kaavaobjekti" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="kaavaobjekti_fk" index="1"/>
+		<object name="kaavaobjekti_lisatiedot_uq" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="kaavaobjekti_lisatiedot_has_one_kaavaobjekti" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="yk_yleiskaava.kaavaobjekti"
+	 dst-table="yk_yleiskaava.kaavaobjekti_lisatiedot"
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
+
+</dbmodel>
