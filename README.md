@@ -11,4 +11,40 @@ The documents published here are backround information for creating future gener
 
 ## The database model
 
-The database model is work in progress and is to be utilized in Tampere after finished.
+The database model is work in progress and is to be utilized in Tampere after finished. There are the following schemas in the database:
+
+### yk_yleiskaava
+
+The zoning plan scheme that contains the core tables of the model. Besides the table for the plan there are tables for the zoning objects and regulations, official documentation, diary numbers and background map. The tables contain also many fields required by INSPIRE.
+
+### yk_prosessi
+
+The tables in this scheme contain connections to the data that are needed in the zoning plan process. For example, there are tables for links to the documents in other systems as well as connections to other level spatial plans.
+
+### yk_kuvaustekniikka
+
+This scheme helps in creating visualization of the database data. Since there can be several theme maps in the published zoning plan, there is a table for theming. There are also geometry tables and connecting tables.
+
+### yk_geoserver
+
+This provides views created from multiple tables to be used in GeoServer map layers.
+
+### yk_suunnitteluparametrit
+
+The scheme contains parameters useful for carrying out the planning process correctly.
+
+### yk_mitoitus_varanto
+
+There is a system that provides great visualizations for dimensioning indication values, so the connections to that system are to be done via this scheme.
+
+### yk_koodiluettelot
+
+Various codings especially related to INSPIRE ones that already exist but also ones that are under creation process in Finland nationally.
+
+### yk_inspire
+
+Tables to related to INSPIRE.
+
+### yk_metatiedot
+
+When the zoning plan is published, for example, in Paikkatietoikkuna that is Finnish national map service, then data in meta data table is used.
