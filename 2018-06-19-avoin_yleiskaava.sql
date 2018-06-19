@@ -84,7 +84,7 @@ SET search_path TO pg_catalog,public,yk_yleiskaava,yk_koodiluettelot,yk_kuvauste
 -- DROP TABLE IF EXISTS yk_yleiskaava.kaavaobjekti CASCADE;
 CREATE TABLE yk_yleiskaava.kaavaobjekti(
 	id uuid NOT NULL,
-	geom geometry(GEOMETRYZ),
+	geom geometry(GEOMETRYZ, 3878),
 	nimi varchar,
 	muokkaaja varchar,
 	voimaantulopvm date,
@@ -143,7 +143,7 @@ ALTER TABLE yk_yleiskaava.kaavaobjekti OWNER TO postgres;
 CREATE TABLE yk_yleiskaava.yleiskaava(
 	id uuid NOT NULL,
 	nimi varchar NOT NULL,
-	kaavan_ulkorajaus geometry(MULTIPOLYGONZ),
+	kaavan_ulkorajaus geometry(MULTIPOLYGONZ, 3878),
 	vaihtoehtoinen_nimi varchar,
 	vireilletulopvm date,
 	voimaantulopvm date,
@@ -410,7 +410,7 @@ ALTER TABLE yk_suunnitteluparametrit.ei_sitova_tavoiteaika ADD CONSTRAINT ei_sit
 -- DROP TABLE IF EXISTS yk_suunnitteluparametrit.tukes_vyohyke CASCADE;
 CREATE TABLE yk_suunnitteluparametrit.tukes_vyohyke(
 	id uuid NOT NULL,
-	geom geometry(MULTIPOLYGONZ),
+	geom geometry(MULTIPOLYGONZ, 3878),
 	nimi varchar,
 	kuvaus varchar,
 	linkki_data varchar,
@@ -1418,7 +1418,7 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS yk_kuvaustekniikka.apugeometria_piste CASCADE;
 CREATE TABLE yk_kuvaustekniikka.apugeometria_piste(
 	id uuid NOT NULL,
-	geom geometry(POINTZ),
+	geom geometry(POINTZ, 3878),
 	nimi varchar,
 	selitys varchar,
 	id_teema uuid,
@@ -1435,7 +1435,7 @@ ALTER TABLE yk_kuvaustekniikka.apugeometria_piste OWNER TO postgres;
 -- DROP TABLE IF EXISTS yk_kuvaustekniikka.apugeometria_viiva CASCADE;
 CREATE TABLE yk_kuvaustekniikka.apugeometria_viiva(
 	id uuid NOT NULL,
-	geom geometry(LINESTRINGZ),
+	geom geometry(LINESTRINGZ, 3878),
 	nimi varchar,
 	selitys varchar,
 	id_teema uuid,
@@ -1452,7 +1452,7 @@ ALTER TABLE yk_kuvaustekniikka.apugeometria_viiva OWNER TO postgres;
 -- DROP TABLE IF EXISTS yk_kuvaustekniikka.apugeometria_alue CASCADE;
 CREATE TABLE yk_kuvaustekniikka.apugeometria_alue(
 	id uuid NOT NULL,
-	geom geometry(POLYGONZ),
+	geom geometry(POLYGONZ, 3878),
 	nimi varchar,
 	selitys varchar,
 	id_teema uuid,
@@ -1571,7 +1571,6 @@ REFERENCES yk_yleiskaava.yleiskaava (id) MATCH FULL
 ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
-
 -- object: yleiskaava_fk | type: CONSTRAINT --
 -- ALTER TABLE yk_prosessi.liittyva_kaava DROP CONSTRAINT IF EXISTS yleiskaava_fk CASCADE;
 ALTER TABLE yk_prosessi.liittyva_kaava ADD CONSTRAINT yleiskaava_fk FOREIGN KEY (id_yleiskaava)
@@ -1653,10 +1652,6 @@ SELECT
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
 	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark,
 	mitoitus.pinta_ala AS pinta_ala_m2
 FROM
 	yk_yleiskaava.kaavamaarays,
@@ -1664,7 +1659,6 @@ FROM
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
 	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava,
 	yk_mitoitus_varanto.mitoitus
 WHERE
 	teema.nimi = 'yk049_k1' AND
@@ -1674,7 +1668,6 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
 	kaavaobjekti.alkup_taulun_nimi = 'k1_kayttotarkoitusalueet' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id AND
 	mitoitus.id_kaavaobjekti = kaavaobjekti.id;
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k1_kayttotark_alue OWNER TO postgres;
@@ -1718,18 +1711,13 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k1' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -1737,8 +1725,7 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING' AND
-	kaavaobjekti.alkup_taulun_nimi = 'k1_linjat_reitit_vaylat_line' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	kaavaobjekti.alkup_taulun_nimi = 'k1_linjat_reitit_vaylat_line';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k1_linjat_reitit_vaylat_viiva OWNER TO postgres;
 -- ddl-end --
@@ -1760,24 +1747,18 @@ SELECT
 	yleismaarays.nimi AS ym_nimi,
 	maaraysteksti,
 	linkki,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.yleiskaava,
 	yk_yleiskaava.yleismaarays,
 	yk_kuvaustekniikka.teema,
-	yk_kuvaustekniikka.yleismaarays_teema_yhteys,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.yleismaarays_teema_yhteys
 WHERE
 	yleiskaava.nro = 'yk049' AND
 	yleismaarays.id_yleiskaava = yleiskaava.id AND
 	teema.nimi = 'yk049_k1' AND
 	yleismaarays_teema_yhteys.id_teema = teema.id AND
-	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id AND
-	mittakaava.id_yleiskaava = yleiskaava.id;
+	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id;
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k1_kaava_alue OWNER TO postgres;
 -- ddl-end --
@@ -1883,18 +1864,13 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k1' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -1902,8 +1878,7 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING' AND
-	kaavaobjekti.alkup_taulun_nimi = 'k1_pyorailyn_tavoiteverkko' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	kaavaobjekti.alkup_taulun_nimi = 'k1_pyorailyn_tavoiteverkko';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk2040_k1_pyora_tavoiteverk_viiva OWNER TO postgres;
 -- ddl-end --
@@ -1946,18 +1921,13 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k1' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -1965,8 +1935,7 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
-	kaavaobjekti.alkup_taulun_nimi = 'k1_strategiset_kehittamisperiaatemerkinnat_polygon' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	kaavaobjekti.alkup_taulun_nimi = 'k1_strategiset_kehittamisperiaatemerkinnat_polygon';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k1_strat_kehit_periaat_merk_alue OWNER TO postgres;
 -- ddl-end --
@@ -2009,26 +1978,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k1' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTIPOINT' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTIPOINT';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k1_yhdyskunta_kohteet_piste OWNER TO postgres;
 -- ddl-end --
@@ -2071,18 +2034,13 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k2' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -2090,8 +2048,7 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
-	kaavaobjekti.alkup_taulun_nimi = 'k2_kayttark_polygon' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	kaavaobjekti.alkup_taulun_nimi = 'k2_kayttark_polygon';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k2_kayttark_alue OWNER TO postgres;
 -- ddl-end --
@@ -2134,26 +2091,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k2' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTIPOINT' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTIPOINT';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k2_kohteet_piste OWNER TO postgres;
 -- ddl-end --
@@ -2196,18 +2147,13 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k2' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -2215,8 +2161,7 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
-	kaavaobjekti.alkup_taulun_nimi = 'k2_osa_alueet_polygon' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	kaavaobjekti.alkup_taulun_nimi = 'k2_osa_alueet_polygon';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k2_osa_alue OWNER TO postgres;
 -- ddl-end --
@@ -2259,26 +2204,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k2' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k2_yhteydet_polut_viiva OWNER TO postgres;
 -- ddl-end --
@@ -2321,26 +2260,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k3' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k3_arvo_alue OWNER TO postgres;
 -- ddl-end --
@@ -2385,11 +2318,7 @@ SELECT
 	kaavamaarays.huomio AS m_huomio,
 	teema.nimi AS teema,
 	lahtoaineisto.linkitys_tyyppi,
-	lahtoaineisto.linkki_data,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	lahtoaineisto.linkki_data
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
@@ -2397,8 +2326,7 @@ FROM
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
 	yk_kuvaustekniikka.teema,
 	yk_prosessi.lahtoaineisto,
-	yk_prosessi.lahtoaineisto_yleiskaava_yhteys,
-	yk_suunnitteluparametrit.mittakaava
+	yk_prosessi.lahtoaineisto_yleiskaava_yhteys
 WHERE
 	teema.nimi = 'yk049_k3' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -2406,7 +2334,6 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id AND
 	lahtoaineisto_yleiskaava_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	lahtoaineisto_yleiskaava_yhteys.id_lahtoaineisto = lahtoaineisto.id;
 -- ddl-end --
@@ -2451,26 +2378,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k4' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTIPOINT' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTIPOINT';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k4_alue OWNER TO postgres;
 -- ddl-end --
@@ -2513,26 +2434,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k4' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k4_kohteet_piste OWNER TO postgres;
 -- ddl-end --
@@ -2764,26 +2679,20 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k4' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
 	kaavaobjekti_teema_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
-	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	GeometryType(kaavaobjekti.geom) = 'MULTILINESTRING';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k4_ojat_viiva OWNER TO postgres;
 -- ddl-end --
@@ -2826,18 +2735,13 @@ SELECT
 	kaavamaarays.kuvaus AS m_kuvaus,
 	kaavamaarays.linkki AS m_linkki,
 	kaavamaarays.huomio AS m_huomio,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.kaavamaarays,
 	yk_yleiskaava.kaavaobjekti_kaavamaarays_yhteys,
 	yk_yleiskaava.kaavaobjekti,
 	yk_kuvaustekniikka.kaavaobjekti_teema_yhteys,
-	yk_kuvaustekniikka.teema,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.teema
 WHERE
 	teema.nimi = 'yk049_k1' AND
 	teema.id = kaavaobjekti_teema_yhteys.id_teema AND
@@ -2845,8 +2749,7 @@ WHERE
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavaobjekti = kaavaobjekti.id AND
 	kaavaobjekti_kaavamaarays_yhteys.id_kaavamaarays = kaavamaarays.id AND
 	GeometryType(kaavaobjekti.geom) = 'MULTIPOLYGON' AND
-	kaavaobjekti.alkup_taulun_nimi = 'k1_erityisominaisuus_polygon' AND
-	mittakaava.id_kaavaobjekti = kaavaobjekti.id;
+	kaavaobjekti.alkup_taulun_nimi = 'k1_erityisominaisuus_polygon';
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k1_erityisominaisuus_alue OWNER TO postgres;
 -- ddl-end --
@@ -2868,24 +2771,18 @@ SELECT
 	yleismaarays.nimi AS ym_nimi,
 	maaraysteksti,
 	linkki,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.yleiskaava,
 	yk_yleiskaava.yleismaarays,
 	yk_kuvaustekniikka.teema,
-	yk_kuvaustekniikka.yleismaarays_teema_yhteys,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.yleismaarays_teema_yhteys
 WHERE
 	yleiskaava.nro = 'yk049' AND
 	yleismaarays.id_yleiskaava = yleiskaava.id AND
 	teema.nimi = 'yk049_k2' AND
 	yleismaarays_teema_yhteys.id_teema = teema.id AND
-	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id AND
-	mittakaava.id_yleiskaava = yleiskaava.id;
+	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id;
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k2_kaava_alue OWNER TO postgres;
 -- ddl-end --
@@ -2907,24 +2804,18 @@ SELECT
 	yleismaarays.nimi AS ym_nimi,
 	maaraysteksti,
 	linkki,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.yleiskaava,
 	yk_yleiskaava.yleismaarays,
 	yk_kuvaustekniikka.teema,
-	yk_kuvaustekniikka.yleismaarays_teema_yhteys,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.yleismaarays_teema_yhteys
 WHERE
 	yleiskaava.nro = 'yk049' AND
 	yleismaarays.id_yleiskaava = yleiskaava.id AND
 	teema.nimi = 'yk049_k3' AND
 	yleismaarays_teema_yhteys.id_teema = teema.id AND
-	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id AND
-	mittakaava.id_yleiskaava = yleiskaava.id;
+	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id;
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k3_kaava_alue OWNER TO postgres;
 -- ddl-end --
@@ -2946,24 +2837,18 @@ SELECT
 	yleismaarays.nimi AS ym_nimi,
 	maaraysteksti,
 	linkki,
-	teema.nimi AS teema,
-	mittakaava.oletus AS mitta_oletus,
-	mittakaava.minimi AS mitta_min,
-	mittakaava.maksimi AS mitta_maks,
-	mittakaava.suunnittelijalle_tarkoitettu AS mitta_suunnit_tark
+	teema.nimi AS teema
 FROM
 	yk_yleiskaava.yleiskaava,
 	yk_yleiskaava.yleismaarays,
 	yk_kuvaustekniikka.teema,
-	yk_kuvaustekniikka.yleismaarays_teema_yhteys,
-	yk_suunnitteluparametrit.mittakaava
+	yk_kuvaustekniikka.yleismaarays_teema_yhteys
 WHERE
 	yleiskaava.nro = 'yk049' AND
 	yleismaarays.id_yleiskaava = yleiskaava.id AND
 	teema.nimi = 'yk049_k4' AND
 	yleismaarays_teema_yhteys.id_teema = teema.id AND
-	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id AND
-	mittakaava.id_yleiskaava = yleiskaava.id;
+	yleismaarays_teema_yhteys.id_yleismaarays = yleismaarays.id;
 -- ddl-end --
 ALTER VIEW yk_geoserver.yk049_k4_kaava_alue OWNER TO postgres;
 -- ddl-end --
