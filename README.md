@@ -9,6 +9,10 @@ The documents published here are backround information for creating future gener
 
 -Core terms used in Finnish land use planning. Since there have not existed one publically available "Yleiskaavoitus" term document  before, this originally for internal use aimed document can be useful more broadly.
 
+## The SLD styles
+
+The database model has been tested with the test database data and SLD styles provided by city of Tampere.
+
 ## The database model
 
 The database model is work in progress and is to be utilized in Tampere after finished. There are the following schemas in the database:
