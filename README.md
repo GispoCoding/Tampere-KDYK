@@ -9,9 +9,11 @@ The documents published here are backround information for creating future gener
 
 -Core terms used in Finnish land use planning. Since there have not existed one publically available "Yleiskaavoitus" term document  before, this originally for internal use aimed document can be useful more broadly.
 
+-Test data transfer instructions that describes how to prepare and transfer the Tampere planned land use test data to the open data model database.
+
 ## The SLD styles
 
-The database model has been tested with the test database data and SLD styles provided by city of Tampere.
+The database model has been tested with the test database data and SLD styles provided by city of Tampere. See the [SLD_styles folder](SLD_styles) for further description.
 
 ## The database model
 
