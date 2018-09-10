@@ -16,7 +16,7 @@ The database model has been tested with the test database data and SLD styles pr
 
 ## The database model
 
-The [database model](database_model) is to be utilized in Tampere. The tables and the table columns are documented in the [wiki](wiki). There are the following schemas in the database:
+The [database model](database_model) is to be utilized in Tampere. The tables and the table columns are documented in the [wiki](https://github.com/GispoCoding/Tampere-KDYK/wiki). There are the following schemas in the database:
 
 ### yk_yleiskaava
 
