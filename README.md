@@ -16,11 +16,15 @@ The database model has been tested with the test database data and SLD styles pr
 
 ## The database model
 
-The [database model](database_model) is work in progress and is to be utilized in Tampere after finished. There are the following schemas in the database:
+The [database model](database_model) is to be utilized in Tampere. The tables and the table columns are documented in the [wiki](wiki). There are the following schemas in the database:
 
 ### yk_yleiskaava
 
 The zoning plan scheme that contains the core tables of the model. Besides the table for the plan there are tables for the zoning objects and regulations, official documentation, diary numbers and background map. The tables contain also many fields required by INSPIRE.
+
+### yk_metatieto
+
+The meta data for the planned land use. Currently the data is stored in a table defined by the JHS 158.
 
 ### yk_prosessi
 
@@ -32,15 +36,15 @@ This scheme helps in creating visualization of the database data. Since there ca
 
 ### yk_geoserver
 
-This provides views created from multiple tables to be used in GeoServer map layers.
+This provides views created from multiple tables used for visualization in GeoServer map layers.
 
 ### yk_suunnitteluparametrit
 
-The scheme contains parameters useful for carrying out the planning process correctly.
+The scheme contains parameters useful for carrying out the planning process correctly. A software should utilize these to help in the planning process.
 
 ### yk_mitoitus_varanto
 
-There is a system that provides great visualizations for dimensioning indication values, so the connections to that system are to be done via this scheme.
+Tables to work with the dimensioning indicators. There is a system that provides great visualizations for dimensioning indication values, so the connections to that system are also to be done via this scheme.
 
 ### yk_koodiluettelot
 
@@ -48,7 +52,7 @@ Various codings especially related to INSPIRE ones that already exist but also o
 
 ### yk_inspire
 
-Tables to related to INSPIRE.
+Tables to related to INSPIRE. When there are more than one land use class or supplementary regulation class for a zoning object then these might be used.
 
 ### yk_metatiedot
 
