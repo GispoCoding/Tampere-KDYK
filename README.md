@@ -22,9 +22,9 @@ The [database model](database_model) is to be utilized in Tampere. The tables an
 
 The zoning plan scheme that contains the core tables of the model. Besides the table for the plan there are tables for the zoning objects and regulations, official documentation, diary numbers and background map. The tables contain also many fields required by INSPIRE.
 
-### yk_metatieto
+### yk_metatiedot
 
-The meta data for the planned land use. Currently the data is stored in a table defined by the JHS 158.
+The meta data for the planned land use. Currently the data is stored in a table defined by the JHS 158. When the zoning plan is published, for example, in Paikkatietoikkuna that is Finnish national map service, then data in meta data table is used.
 
 ### yk_prosessi
 
@@ -53,7 +53,3 @@ Various codings especially related to INSPIRE ones that already exist but also o
 ### yk_inspire
 
 Tables to related to INSPIRE. When there are more than one land use class or supplementary regulation class for a zoning object then these might be used.
-
-### yk_metatiedot
-
-When the zoning plan is published, for example, in Paikkatietoikkuna that is Finnish national map service, then data in meta data table is used.
