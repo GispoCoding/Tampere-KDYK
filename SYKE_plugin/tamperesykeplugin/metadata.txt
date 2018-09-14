@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=SYKE-pohjavesialueiden tuonti
+qgisMinimumVersion=3.0
+description=Lisäosalla saa tuotua SYKE:n pohjavesiaineiston kaavoituksen tietokantaan
+version=0.1
+author=Gispo Oy
+email=erno@gispo.fi
+
+about=Lisäosalla saa tuotua SYKE:n pohjavesiaineiston Tampereen yleiskaavoituksen avoimen tietomallin mukaiseen tietokantaan.
+
+tracker=https://github.com/GispoCoding/Tampere-KDYK/issues
+repository=https://github.com/GispoCoding/Tampere-KDYK
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=python tampere city planning zoning
+
+homepage=https://github.com/GispoCoding/Tampere-KDYK
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
