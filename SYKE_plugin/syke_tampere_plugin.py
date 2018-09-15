@@ -23,13 +23,27 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QDialogButtonBox
+
+from qgis.core import (QgsMessageLog,
+    Qgis,
+    QgsVectorLayer,
+    QgsTask,
+    QgsApplication,
+    QgsTaskManager)
+
+from qgis.gui import QgsBusyIndicatorDialog
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .syke_tampere_plugin_dialog import TampereSYKEPluginDialog
 import os.path
+
+from urllib import request
+import xml.etree.ElementTree as etree
+from datetime import datetime
+import zipfile
 
 
 class TampereSYKEPlugin:
@@ -70,6 +84,16 @@ class TampereSYKEPlugin:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'TampereSYKEPlugin')
         self.toolbar.setObjectName(u'TampereSYKEPlugin')
+
+        self.shouldAddToKDYKDatabase = False
+        self.zip_url = None
+        self.updated = None
+        self.updated_text = ''
+
+        self.path = os.path.dirname(__file__)
+        self.data_download_dir = os.path.join(self.path, "SYKE")
+
+        self.busy_indicator_dialog = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -184,12 +208,123 @@ class TampereSYKEPlugin:
 
     def run(self):
         """Run method that performs all the real work"""
+
+        # TODO save and read from settings
+
+        self.dlg.buttonBoxOkCancel.button(QDialogButtonBox.Ok).setEnabled(False)
+
+        self.dlg.qgsFileWidgetDataLocation.setFilePath(self.data_download_dir)
+
         # show the dialog
         self.dlg.show()
+
+        self.getSYKEInfo()
+
+        self.dlg.labelInfoSYKE.setText(self.updated_text)
+        self.dlg.buttonBoxOkCancel.button(QDialogButtonBox.Ok).setEnabled(True)
+
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            pass
+            self.shouldAddToKDYKDatabase = self.dlg.checkBoxAddToKDYKDatabase.isChecked()
+            QgsMessageLog.logMessage('shouldAddToKDYKDatabase: ' + str(self.shouldAddToKDYKDatabase), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+            self.data_download_dir = self.dlg.qgsFileWidgetDataLocation.filePath()
+            # TODO check that all succeeds and user settings are ok
+
+            self.importData()
+
+    def importData(self):
+        self.getZip()
+        self.copyDataFromSYKESHPToTamperePlan()
+
+    def getSYKEInfo(self):
+        atom_URL = "http://wwwd3.ymparisto.fi/d3/Atom/pohjavesialueet.xml"
+        r = request.urlopen(atom_URL)
+        atom_xml_string = r.read().decode(r.info().get_param('charset') or 'utf-8')
+        #QgsMessageLog.logMessage(atom_xml, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+        et_SYKE = etree.ElementTree(etree.fromstring(atom_xml_string))
+        root = et_SYKE.getroot()
+        QgsMessageLog.logMessage(root.tag, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+        entry = root.find('{http://www.w3.org/2005/Atom}entry')
+        zip_url_elem = entry.find('{http://www.w3.org/2005/Atom}id')
+        self.zip_url = zip_url_elem.text
+        self.updated = entry.find('{http://www.w3.org/2005/Atom}updated')
+
+        # TODO add author.name and author.email and entry.link.title
+
+        self.updated_text = self.formatUpdatedText(self.updated.text)
+
+        QgsMessageLog.logMessage(self.zip_url, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+        QgsMessageLog.logMessage(self.updated.text, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+        QgsMessageLog.logMessage(self.updated_text, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+    def formatUpdatedText(self, text):
+        parsed_time = datetime.strptime(text, '%Y-%m-%dT%H:%M:%SZ')
+
+        QgsMessageLog.logMessage(str(parsed_time))
+
+        if parsed_time.hour < 10:
+            parsed_hours = '0' + str(parsed_time.hour)
+        else:
+            parsed_hours = str(parsed_time.hour)
+
+        if parsed_time.minute < 10:
+            parsed_minutes = '0' + str(parsed_time.minute)
+        else:
+            parsed_minutes = str(parsed_time.minute)
+
+
+        if parsed_time.second < 10:
+            parsed_seconds = '0' + str(parsed_time.second)
+        else:
+            parsed_seconds = str(parsed_time.second)
+
+        return str(parsed_time.day) + '.' + str(parsed_time.month) + '.' + str(parsed_time.year) + ", klo " + parsed_hours + ':' + parsed_minutes + ':' + parsed_seconds + ' (UTC)'
+
+    def getZip(self):
+
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Downloading the SYKE groundwater area data...'), Qgis.Info, 8)
+        #QCoreApplication.processEvents()
+        QgsApplication.processEvents()
+
+        #self.busy_indicator_dialog = QgsBusyIndicatorDialog(self.tr(u'A moment... Downloading the SYKE groundwater area data...'), self.iface.mainWindow())
+        #self.busy_indicator_dialog.show()
+
+        
+        response = request.urlopen(self.zip_url)
+
+        dir_path = os.path.join(self.data_download_dir)
+
+        if not os.path.exists(dir_path):
+            try:
+                os.makedirs(dir_path)
+            except OSError as exc:
+                QgsMessageLog.logMessage(str(exc.errno), "Tampere-KDYK-SYKE-plugin", QgsMessageLog.CRITICAL)
+        if not os.path.exists(dir_path):
+            QgsMessageLog.logMessage("Error creating folder to store the SYKE data", "Tampere-KDYK-SYKE-plugin", QgsMessageLog.CRITICAL)
+
+        zip_url_parts = self.zip_url.split('/')
+        file_name = zip_url_parts[-1]
+        zip_path = os.path.join(dir_path, file_name)
+        CHUNK = 16 * 1024
+        with open(zip_path, 'wb') as f:
+            while True:
+                chunk = response.read(CHUNK)
+                if not chunk:
+                    break
+                f.write(chunk)
+
+        #self.busy_indicator_dialog.setMessage(self.tr(u'A moment... Extracting the SYKE groundwater area data...'))
+
+        with zipfile.ZipFile(zip_path) as zf:
+            zf.extractall(dir_path)
+
+        self.iface.messageBar().clearWidgets()
+        self.iface.messageBar().pushMessage(self.tr(u'Data downloaded...'), Qgis.Info, 8)
+        #self.busy_indicator_dialog.hide()
+
+
+    def copyDataFromSYKESHPToTamperePlan(self):
+        pass
+
