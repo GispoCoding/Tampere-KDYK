@@ -23,14 +23,16 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QDialogButtonBox
+from PyQt5.QtWidgets import QAction, QDialogButtonBox, QMessageBox
 
 from qgis.core import (QgsMessageLog,
     Qgis,
     QgsVectorLayer,
     QgsTask,
     QgsApplication,
-    QgsTaskManager)
+    QgsTaskManager,
+    QgsProject,
+    QgsWkbTypes)
 
 from qgis.gui import QgsBusyIndicatorDialog
 
@@ -85,7 +87,8 @@ class TampereSYKEPlugin:
         self.toolbar = self.iface.addToolBar(u'TampereSYKEPlugin')
         self.toolbar.setObjectName(u'TampereSYKEPlugin')
 
-        self.shouldAddToKDYKDatabase = False
+        self.checkBoxAddToExistingLandUseLayer = False
+        self.shouldAddAsLayer = False
         self.zip_url = None
         self.updated = None
         self.updated_text = ''
@@ -94,6 +97,14 @@ class TampereSYKEPlugin:
         self.data_download_dir = os.path.join(self.path, "SYKE")
 
         self.busy_indicator_dialog = None
+
+        self.shouldAddFrom = 'Tampere'
+
+        self.shouldAddFields = False
+
+        self.exisingTargetLayerName = ''
+
+        self.dlg.checkBoxAddToExistingLandUseLayer.stateChanged.connect(self.handleAddToExistingLandUseLayerStateChange)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -205,6 +216,10 @@ class TampereSYKEPlugin:
         # remove the toolbar
         del self.toolbar
 
+    def handleAddToExistingLandUseLayerStateChange(self, state):
+        self.dlg.groupBoxChooseExistingLayer.setEnabled(state)
+        self.dlg.groupBoxAddFeatures.setEnabled(state)
+        self.dlg.groupBoxAddFields.setEnabled(state)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -214,6 +229,17 @@ class TampereSYKEPlugin:
         self.dlg.buttonBoxOkCancel.button(QDialogButtonBox.Ok).setEnabled(False)
 
         self.dlg.qgsFileWidgetDataLocation.setFilePath(self.data_download_dir)
+
+        self.dlg.comboBoxLayers.clear()
+        for layer in QgsProject.instance().mapLayers().values():
+            if isinstance(layer, QgsVectorLayer):
+                if layer.geometryType() != QgsWkbTypes.PointGeometry and layer.geometryType() != QgsWkbTypes.LineGeometry:
+                    self.dlg.comboBoxLayers.addItem(layer.name())
+
+        index = self.dlg.comboBoxLayers.findText('kaavaobjekti_alue')
+        if index != -1:
+            self.dlg.comboBoxLayers.setCurrentIndex(index)
+
 
         # show the dialog
         self.dlg.show()
@@ -227,8 +253,29 @@ class TampereSYKEPlugin:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            self.shouldAddToKDYKDatabase = self.dlg.checkBoxAddToKDYKDatabase.isChecked()
-            QgsMessageLog.logMessage('shouldAddToKDYKDatabase: ' + str(self.shouldAddToKDYKDatabase), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+            self.checkBoxAddToExistingLandUseLayer = self.dlg.checkBoxAddToKDYKDatabase.isChecked()
+            self.shouldAddAsLayer = self.dlg.checkBoxAddAsLayer.isChecked()
+            QgsMessageLog.logMessage('checkBoxAddToExistingLandUseLayer: ' + str(self.checkBoxAddToExistingLandUseLayer), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+            if self.checkBoxAddToExistingLandUseLayer:
+                self.exisingTargetLayerName = self.dlg.comboBoxLayers.currentText()
+
+                QgsMessageLog.logMessage("self.exisingTargetLayerName: " + self.exisingTargetLayerName, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+                if self.dlg.radioButtonAddFromTampere.isChecked():
+                    self.shouldAddFrom = 'Tampere'
+                elif self.dlg.radioButtonAddFromCanvasExtent.isChecked():
+                    self.shouldAddFrom = 'CanvasExtent'
+                elif self.dlg.radioButtonAddFromFinland.isChecked():
+                    self.shouldAddFrom = 'Finland'
+
+                if self.dlg.radioButtonAddFieldsYes.isChecked():
+                    self.shouldAddFields = True
+                else:
+                    self.shouldAddFields = False
+
+            QgsMessageLog.logMessage("shouldAddFrom: " + self.shouldAddFrom, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
             self.data_download_dir = self.dlg.qgsFileWidgetDataLocation.filePath()
             # TODO check that all succeeds and user settings are ok
 
@@ -237,6 +284,7 @@ class TampereSYKEPlugin:
     def importData(self):
         self.getZip()
         self.copyDataFromSYKESHPToTamperePlan()
+        self.addDataSourceReference()
 
     def getSYKEInfo(self):
         atom_URL = "http://wwwd3.ymparisto.fi/d3/Atom/pohjavesialueet.xml"
@@ -326,5 +374,35 @@ class TampereSYKEPlugin:
 
 
     def copyDataFromSYKESHPToTamperePlan(self):
-        pass
+        
+        file_name = "PvesiALue.shp"
+        file_path = os.path.join(self.data_download_dir, file_name)
 
+        layer = QgsVectorLayer(file_path, file_name.split('.')[0], 'ogr')
+        
+        if layer.isValid():
+            if self.shouldAddAsLayer:
+                QgsProject.instance().addMapLayer(layer)
+
+            if self.checkBoxAddToExistingLandUseLayer:
+                if self.shouldAddFrom == 'Tampere':
+                    pass
+                elif self.shouldAddFrom == 'CanvasExtent':
+                    pass
+                else: # Finland
+                    pass
+
+            if self.shouldAddFields:
+                pass
+            else:
+                pass
+
+            #self.exisingTargetLayerName
+
+        else:
+            QMessageBox.information(self.iface.mainWindow(),
+                'Layer is not valid',
+                'Could not load the layer')
+
+    def addDataSourceReference(self):
+        pass
