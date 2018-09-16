@@ -305,7 +305,7 @@ class TampereSYKEPlugin:
             self.importData()
 
     def importData(self):
-        #self.getZip()
+        self.getZip()
         self.copyDataFromSYKESHPToTamperePlan()
         self.addDataSourceReference()
 
