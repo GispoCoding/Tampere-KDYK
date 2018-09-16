@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QDate
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QDialogButtonBox, QMessageBox
 
@@ -32,7 +32,14 @@ from qgis.core import (QgsMessageLog,
     QgsApplication,
     QgsTaskManager,
     QgsProject,
-    QgsWkbTypes)
+    QgsWkbTypes,
+    QgsRectangle,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsPointXY,
+    QgsFeature,
+    QgsGeometry,
+    QgsField)
 
 from qgis.gui import QgsBusyIndicatorDialog
 
@@ -46,6 +53,7 @@ from urllib import request
 import xml.etree.ElementTree as etree
 from datetime import datetime
 import zipfile
+import uuid
 
 
 class TampereSYKEPlugin:
@@ -102,6 +110,8 @@ class TampereSYKEPlugin:
 
         self.shouldAddFields = False
 
+        self.existingTargetLayerIDs = []
+        self.exisingTargetLayerIndex = -1
         self.exisingTargetLayerName = ''
 
         self.dlg.checkBoxAddToExistingLandUseLayer.stateChanged.connect(self.handleAddToExistingLandUseLayerStateChange)
@@ -201,7 +211,7 @@ class TampereSYKEPlugin:
         icon_path = ':/plugins/syke_tampere_plugin/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'SYKE:n pohjavesialueiden tuonti'),
+            text=self.tr(u'SYKE-pohjavesialueiden tuonti'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -230,11 +240,17 @@ class TampereSYKEPlugin:
 
         self.dlg.qgsFileWidgetDataLocation.setFilePath(self.data_download_dir)
 
+        self.existingTargetLayerIDs = []
         self.dlg.comboBoxLayers.clear()
-        for layer in QgsProject.instance().mapLayers().values():
-            if isinstance(layer, QgsVectorLayer):
-                if layer.geometryType() != QgsWkbTypes.PointGeometry and layer.geometryType() != QgsWkbTypes.LineGeometry:
-                    self.dlg.comboBoxLayers.addItem(layer.name())
+        layers = QgsProject.instance().mapLayers()
+        if len(layers.values()) > 0:
+            for layer in layers.values():
+                if isinstance(layer, QgsVectorLayer):
+                    if layer.geometryType() != QgsWkbTypes.PointGeometry and layer.geometryType() != QgsWkbTypes.LineGeometry:
+                        self.existingTargetLayerIDs.append(layer.id())
+                        self.dlg.comboBoxLayers.addItem(layer.name())
+        if self.dlg.comboBoxLayers.count() == 0:
+            self.dlg.comboBoxLayers.addItem(self.tr("No suitable layers in the QGIS project"))
 
         index = self.dlg.comboBoxLayers.findText('kaavaobjekti_alue')
         if index != -1:
@@ -253,12 +269,13 @@ class TampereSYKEPlugin:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            self.checkBoxAddToExistingLandUseLayer = self.dlg.checkBoxAddToKDYKDatabase.isChecked()
+            self.checkBoxAddToExistingLandUseLayer = self.dlg.checkBoxAddToExistingLandUseLayer.isChecked()
             self.shouldAddAsLayer = self.dlg.checkBoxAddAsLayer.isChecked()
             QgsMessageLog.logMessage('checkBoxAddToExistingLandUseLayer: ' + str(self.checkBoxAddToExistingLandUseLayer), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
 
-            if self.checkBoxAddToExistingLandUseLayer:
+            if self.checkBoxAddToExistingLandUseLayer and len(self.existingTargetLayerIDs) > 0:
                 self.exisingTargetLayerName = self.dlg.comboBoxLayers.currentText()
+                self.exisingTargetLayerIndex = self.dlg.comboBoxLayers.currentIndex()
 
                 QgsMessageLog.logMessage("self.exisingTargetLayerName: " + self.exisingTargetLayerName, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
 
@@ -282,7 +299,7 @@ class TampereSYKEPlugin:
             self.importData()
 
     def importData(self):
-        self.getZip()
+        #self.getZip()
         self.copyDataFromSYKESHPToTamperePlan()
         self.addDataSourceReference()
 
@@ -339,7 +356,6 @@ class TampereSYKEPlugin:
         #self.busy_indicator_dialog = QgsBusyIndicatorDialog(self.tr(u'A moment... Downloading the SYKE groundwater area data...'), self.iface.mainWindow())
         #self.busy_indicator_dialog.show()
 
-        
         response = request.urlopen(self.zip_url)
 
         dir_path = os.path.join(self.data_download_dir)
@@ -384,25 +400,216 @@ class TampereSYKEPlugin:
             if self.shouldAddAsLayer:
                 QgsProject.instance().addMapLayer(layer)
 
-            if self.checkBoxAddToExistingLandUseLayer:
+
+            if self.checkBoxAddToExistingLandUseLayer and len(self.existingTargetLayerIDs) > 0:
+                targetLayer = QgsProject.instance().mapLayer(self.existingTargetLayerIDs[self.exisingTargetLayerIndex])
+
+                QgsMessageLog.logMessage("targetLayer: " + targetLayer.name(), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+                if self.shouldAddFields:
+                    self.addSourceLayerFieldsToTargetLayer(layer, targetLayer)
+                #else:
+                #    pass
+
                 if self.shouldAddFrom == 'Tampere':
-                    pass
+                    self.addSYKEDataToExistingLayerFromTampere(layer, targetLayer)
                 elif self.shouldAddFrom == 'CanvasExtent':
-                    pass
+                    self.addSYKEDataToExistingLayerFromCanvasExtent(layer, targetLayer)
                 else: # Finland
-                    pass
-
-            if self.shouldAddFields:
-                pass
-            else:
-                pass
-
-            #self.exisingTargetLayerName
+                    self.addSYKEDataToExistingLayerAll(layer, targetLayer)
 
         else:
             QMessageBox.information(self.iface.mainWindow(),
-                'Layer is not valid',
-                'Could not load the layer')
+                self.tr('Layer is not valid'),
+                self.tr('Could not load the layer'))
 
     def addDataSourceReference(self):
         pass
+
+    def addSYKEDataToExistingLayerFromTampere(self, goundWaterLayer, targetLayer):
+        #tampereRect4326 = QgsRectangle.fromWkt("POLYGON((23.542288 61.836613, 24.118494 61.836613, 24.118494 61.427364, 23.542288 61.427364, 23.542288 61.836613))")
+
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Adding all SYKE groundwater features from Tampere municipality...'), Qgis.Info, 8)
+        QgsApplication.processEvents()
+
+        source_crs = QgsCoordinateReferenceSystem(4326)
+        target_crs = goundWaterLayer.crs()
+        transform = QgsCoordinateTransform(source_crs, target_crs, QgsProject.instance())
+        dest_min_point = transform.transform(QgsPointXY(23.542288, 61.427364))
+        dest_max_point = transform.transform(QgsPointXY(24.118494, 61.836613))
+        tampereRect = QgsRectangle(dest_min_point, dest_max_point)
+
+        QgsMessageLog.logMessage("tampereRect: " + tampereRect.toString(), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+        features = goundWaterLayer.getFeatures()
+
+        intersectingFeatures = []
+
+        for i, feature in enumerate(features):
+            if feature.hasGeometry():
+                geom = feature.geometry()
+                if geom.intersects(tampereRect):
+                    QgsMessageLog.logMessage("Adding a ground water feature to the target layer", "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+                    newFeature = self.createTargetFeatureFromSourceFeature(goundWaterLayer, feature, targetLayer)
+
+                    intersectingFeatures.append(newFeature)
+   
+        success = targetLayer.dataProvider().addFeatures(intersectingFeatures)
+        
+        targetLayer.updateExtents()
+        targetLayer.triggerRepaint()
+
+        self.iface.messageBar().clearWidgets()
+        if success:
+            self.iface.messageBar().pushMessage(self.tr(u'Succesfully added SYKE groundwater features from Tampere municipality'), Qgis.Info, 8)
+        else:
+            self.iface.messageBar().pushMessage(self.tr(u'Failed to add SYKE groundwater features from Tampere municipality'), Qgis.Error, 8)
+
+    def addSYKEDataToExistingLayerFromCanvasExtent(self, goundWaterLayer, targetLayer):
+
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Adding SYKE groundwater features from the canvas extent...'), Qgis.Info, 8)
+        QgsApplication.processEvents()
+
+        extent = self.iface.mapCanvas().extent() # QgsRectangle
+        min_lon = extent.xMinimum()
+        min_lat = extent.yMinimum()
+        max_lon = extent.xMaximum()
+        max_lat = extent.yMaximum()
+
+        source_crs = QgsProject.instance().crs()
+        target_crs = goundWaterLayer.crs()
+        transform = QgsCoordinateTransform(source_crs, target_crs, QgsProject.instance())
+        dest_min_point = transform.transform(QgsPointXY(min_lon, min_lat))
+        dest_max_point = transform.transform(QgsPointXY(max_lon, max_lat))
+        canvasRect = QgsRectangle(dest_min_point, dest_max_point)
+
+        QgsMessageLog.logMessage("canvasRect: " + canvasRect.toString(), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+        features = goundWaterLayer.getFeatures()
+
+        intersectingFeatures = []
+
+        for i, feature in enumerate(features):
+            if feature.hasGeometry():
+                geom = feature.geometry()
+                if geom.intersects(canvasRect):
+                    QgsMessageLog.logMessage("Adding a ground water feature to the target layer", "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+                    newFeature = self.createTargetFeatureFromSourceFeature(goundWaterLayer, feature, targetLayer)
+
+                    intersectingFeatures.append(newFeature)
+   
+        success = targetLayer.dataProvider().addFeatures(intersectingFeatures)
+        
+        targetLayer.updateExtents()
+        targetLayer.triggerRepaint()
+
+        self.iface.messageBar().clearWidgets()
+        if success:
+            self.iface.messageBar().pushMessage(self.tr(u'Succesfully added SYKE groundwater features from the canvas extent'), Qgis.Info, 8)
+        else:
+            self.iface.messageBar().pushMessage(self.tr(u'Failed to add SYKE groundwater features from the canvas extent'), Qgis.Error, 8)
+
+    def addSYKEDataToExistingLayerAll(self, goundWaterLayer, targetLayer):
+
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Adding all SYKE groundwater features...'), Qgis.Info, 8)
+        QgsApplication.processEvents()
+
+        features = goundWaterLayer.getFeatures()
+
+        newFeatures = []
+
+        for i, feature in enumerate(features):
+            if feature.hasGeometry():
+                newFeature = self.createTargetFeatureFromSourceFeature(goundWaterLayer, feature, targetLayer)
+                newFeatures.append(newFeature)
+
+        success = targetLayer.dataProvider().addFeatures(newFeatures)
+        
+        targetLayer.updateExtents()
+        targetLayer.triggerRepaint()
+
+        self.iface.messageBar().clearWidgets()
+        if success:
+            self.iface.messageBar().pushMessage(self.tr(u'Succesfully added all SYKE groundwater features'), Qgis.Info, 8)
+        else:
+            self.iface.messageBar().pushMessage(self.tr(u'Failed to add SYKE groundwater features'), Qgis.Error, 8)
+
+    def addSourceLayerFieldsToTargetLayer(self, sourceLayer, targetLayer):
+
+        sourceTypeNames = [field.typeName() for field in sourceLayer.fields().toList()]
+        sourceTypes = [field.type() for field in sourceLayer.fields().toList()]
+        sourceFieldNames = [field.name() for field in sourceLayer.fields().toList()]
+        QgsMessageLog.logMessage("sourceTypeNames: " + str(sourceTypeNames), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+        QgsMessageLog.logMessage("sourceFieldNames: " + str(sourceFieldNames), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+        targetTypeNames = [field.typeName() for field in targetLayer.fields().toList()]
+        targetFieldNames = [field.name() for field in targetLayer.fields().toList()]
+        QgsMessageLog.logMessage("targetTypeNames: " + str(targetTypeNames), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+        QgsMessageLog.logMessage("targetFieldNames: " + str(targetFieldNames), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+        newAttribs = []
+
+        for i, sName in enumerate(sourceFieldNames):
+            found = False
+            for j, tName in enumerate(targetFieldNames):
+                if tName == sName:
+                    if targetTypeNames[j] == sourceTypeNames[i]:
+                        found = True
+                        break
+            if not found:
+                field = QgsField(sName,  sourceTypes[i])
+                newAttribs.append(field)
+
+        targetLayer.dataProvider().addAttributes(newAttribs)
+        targetLayer.updateFields()
+
+    def createTargetFeatureFromSourceFeature(self, sourceLayer, sourceFeature, targetLayer):
+        newFeature = QgsFeature()
+
+        source_crs = sourceLayer.crs()
+        target_crs = targetLayer.crs()
+        transform = QgsCoordinateTransform(source_crs, target_crs, QgsProject.instance())
+
+        geom = QgsGeometry(sourceFeature.geometry())
+        geom.transform(transform)
+
+        newFeature.setGeometry(geom)
+        
+        attribs = []
+
+        sourceTypeNames = [field.typeName() for field in sourceFeature.fields().toList()]
+        sourceFieldNames = [field.name() for field in sourceFeature.fields().toList()]
+
+        targetTypeNames = [field.typeName() for field in targetLayer.fields().toList()]
+        targetFieldNames = [field.name() for field in targetLayer.fields().toList()]
+
+        for i, tName in enumerate(targetFieldNames):
+            found = False
+            for j, sName in enumerate(sourceFieldNames):
+                if tName == sName:
+                    if targetTypeNames[i] == sourceTypeNames[j]:
+                        found = True
+                        attribs.append(sourceFeature.attribute(j))
+                        break
+            if not found:
+                if tName == 'id' and targetTypeNames[i] == 'uuid':
+                    attribs.append(str(uuid.uuid4()))
+                #elif tName == 'kayttotarkoitus_koodi':
+                #    pass # TODO add when known
+                elif tName == 'kayttotarkoitus_nimi':
+                    attribs.append('POHJAVESIALUE')
+                    QgsMessageLog.logMessage("POHJAVESIALUE" , "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+                elif tName == 'version_alkamispvm':
+                    attribs.append(QDate.currentDate())
+                else:
+                    attribs.append(None)
+
+        QgsMessageLog.logMessage("attribs: " + str(attribs), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+        newFeature.setAttributes(attribs)
+
+        return newFeature
+
+

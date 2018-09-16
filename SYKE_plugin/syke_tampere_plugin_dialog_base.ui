@@ -65,7 +65,7 @@
          <bool>false</bool>
         </property>
         <property name="title">
-         <string>Choose the existing layer:</string>
+         <string>Please, choose the existing layer:</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
@@ -86,7 +86,7 @@
          <item>
           <widget class="QRadioButton" name="radioButtonAddFromTampere">
            <property name="text">
-            <string>Tampere region</string>
+            <string>Tampere municipality</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -120,9 +120,9 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="QRadioButton" name="radioButtonAddFieldsYes">
+          <widget class="QRadioButton" name="radioButtonAddFieldsNo">
            <property name="text">
-            <string>Yes, if not yet in the the target layer</string>
+            <string>No</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -130,9 +130,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButtonAddFieldsNo">
+          <widget class="QRadioButton" name="radioButtonAddFieldsYes">
            <property name="text">
-            <string>No</string>
+            <string>Yes, if not yet in the the target layer</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -151,27 +154,26 @@
       <item>
        <widget class="QgsFileWidget" name="qgsFileWidgetDataLocation"/>
       </item>
+      <item>
+       <widget class="QDialogButtonBox" name="buttonBoxOkCancel">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBoxOkCancel">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
   </layout>
   <zorder>groupBox_3</zorder>
   <zorder>groupBox_2</zorder>
   <zorder>groupBox</zorder>
-  <zorder>buttonBoxOkCancel</zorder>
  </widget>
  <customwidgets>
   <customwidget>
