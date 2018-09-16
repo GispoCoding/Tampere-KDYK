@@ -121,7 +121,7 @@
     <message>
         <location filename="../syke_tampere_plugin.py" line="356"/>
         <source> at </source>
-        <translation>, klo</translation>
+        <translation>, klo </translation>
     </message>
 </context>
 <context>
@@ -142,89 +142,99 @@
         <translation>Haetaan pohjavesialueaineistojen tietoja... Ole hyvä ja odota...</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="39"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="52"/>
         <source>Add downloaded features...</source>
         <translation>Lisää haettu pohjavesialueaineisto...</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="45"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="58"/>
         <source>as a new layer to the QGIS project</source>
         <translation>uutena tasona QGIS-projektiin</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="55"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="68"/>
         <source>to an existing layer</source>
         <translation>QGIS-projektin olemassa olevaan tasoon</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="68"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="81"/>
         <source>Please, choose the existing layer:</source>
         <translation>Ole hyvä ja valitse olemassa oleva taso:</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="83"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="96"/>
         <source>Add features to the existing layer from:</source>
         <translation>Pohjavesialueet lisätään:</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="89"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="102"/>
         <source>Tampere municipality</source>
         <translation>Tampereen kunnan alueelta</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="99"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="112"/>
         <source>visible map canvas extent</source>
         <translation>karttanäkymän alueelta</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="106"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="119"/>
         <source>whole Finland</source>
         <translation>koko Suomesta</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="119"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="132"/>
         <source>Add fields from SYKE data to the target layer?</source>
         <translation>Lisätäänkö aineiston kentät kohdetasoon?</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="125"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="138"/>
         <source>No</source>
         <translation>Ei</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="135"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="148"/>
         <source>Yes, if not yet in the the target layer</source>
         <translation>Kyllä, jos ne eivät vielä ole kohdetasossa</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="187"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="200"/>
         <source>Location to save the downloaded SYKE data:</source>
         <translation>Haetun SYKE:n aineiston tallennuskansio:</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="157"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="170"/>
         <source>set end life span date if not already set</source>
         <translation>aseta version loppumispvm, jos ei asetettu</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="167"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="180"/>
         <source>delete</source>
         <translation>poista</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="174"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="187"/>
         <source>do nothing</source>
         <translation>älä tee mitään</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="212"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="255"/>
         <source>Groundwater features / Source: SYKE, ELY centers.</source>
         <translation>Pohjavesialueet / Lähde: SYKE, ELY-keskukset.</translation>
     </message>
     <message>
-        <location filename="../syke_tampere_plugin_dialog_base.ui" line="151"/>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="164"/>
         <source>For all old target layer groundwater features:</source>
         <translation>Vanhoille kohdetason pohjavesialueille:</translation>
+    </message>
+    <message>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="46"/>
+        <source>Settings</source>
+        <translation>Asetukset</translation>
+    </message>
+    <message>
+        <location filename="../syke_tampere_plugin_dialog_base.ui" line="228"/>
+        <source>Download and add the groundwater features</source>
+        <translation>Hae ja lisää pohjavesialueet</translation>
     </message>
 </context>
 </TS>

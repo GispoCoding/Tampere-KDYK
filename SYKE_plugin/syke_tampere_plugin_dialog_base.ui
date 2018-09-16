@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>382</width>
-    <height>706</height>
+    <width>408</width>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,59 +34,28 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Add downloaded features...</string>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_9">
       <item>
-       <widget class="QCheckBox" name="checkBoxAddAsLayer">
-        <property name="text">
-         <string>as a new layer to the QGIS project</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxAddToExistingLandUseLayer">
-        <property name="text">
-         <string>to an existing layer</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBoxChooseExistingLayer">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QGroupBox" name="groupBox">
         <property name="title">
-         <string>Please, choose the existing layer:</string>
+         <string>Add downloaded features...</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QComboBox" name="comboBoxLayers"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBoxAddFeatures">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="title">
-         <string>Add features to the existing layer from:</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <item>
-          <widget class="QRadioButton" name="radioButtonAddFromTampere">
+          <widget class="QCheckBox" name="checkBoxAddAsLayer">
            <property name="text">
-            <string>Tampere municipality</string>
+            <string>as a new layer to the QGIS project</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -94,86 +63,145 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButtonAddFromCanvasExtent">
+          <widget class="QCheckBox" name="checkBoxAddToExistingLandUseLayer">
            <property name="text">
-            <string>visible map canvas extent</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButtonAddFromFinland">
-           <property name="text">
-            <string>whole Finland</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBoxAddFields">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="title">
-         <string>Add fields from SYKE data to the target layer?</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
-         <item>
-          <widget class="QRadioButton" name="radioButtonAddFieldsNo">
-           <property name="text">
-            <string>No</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButtonAddFieldsYes">
-           <property name="text">
-            <string>Yes, if not yet in the the target layer</string>
+            <string>to an existing layer</string>
            </property>
            <property name="checked">
             <bool>false</bool>
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QGroupBox" name="groupBoxChooseExistingLayer">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="title">
+            <string>Please, choose the existing layer:</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QComboBox" name="comboBoxLayers"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBoxAddFeatures">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="title">
+            <string>Add features to the existing layer from:</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QRadioButton" name="radioButtonAddFromTampere">
+              <property name="text">
+               <string>Tampere municipality</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButtonAddFromCanvasExtent">
+              <property name="text">
+               <string>visible map canvas extent</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButtonAddFromFinland">
+              <property name="text">
+               <string>whole Finland</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBoxAddFields">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="title">
+            <string>Add fields from SYKE data to the target layer?</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QRadioButton" name="radioButtonAddFieldsNo">
+              <property name="text">
+               <string>No</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButtonAddFieldsYes">
+              <property name="text">
+               <string>Yes, if not yet in the the target layer</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBoxOldFeatureHandling">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="title">
+            <string>For all old target layer groundwater features:</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <widget class="QRadioButton" name="radioButtonOldFeaturesExpire">
+              <property name="text">
+               <string>set end life span date if not already set</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButtonOldFeaturesDelete">
+              <property name="text">
+               <string>delete</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButtonOldFeaturesDoNothing">
+              <property name="text">
+               <string>do nothing</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBoxOldFeatureHandling">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
-         <string>For all old target layer groundwater features:</string>
+         <string>Location to save the downloaded SYKE data:</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QRadioButton" name="radioButtonOldFeaturesExpire">
-           <property name="text">
-            <string>set end life span date if not already set</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButtonOldFeaturesDelete">
-           <property name="text">
-            <string>delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButtonOldFeaturesDoNothing">
-           <property name="text">
-            <string>do nothing</string>
-           </property>
-          </widget>
+          <widget class="QgsFileWidget" name="qgsFileWidgetDataLocation"/>
          </item>
         </layout>
        </widget>
@@ -182,28 +210,43 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Location to save the downloaded SYKE data:</string>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QgsFileWidget" name="qgsFileWidgetDataLocation"/>
-      </item>
-      <item>
-       <widget class="QDialogButtonBox" name="buttonBoxOkCancel">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Download and add the groundwater features</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBoxOkCancel">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>
@@ -214,10 +257,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>groupBox_3</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>groupBox</zorder>
-  <zorder>label</zorder>
  </widget>
  <customwidgets>
   <customwidget>
