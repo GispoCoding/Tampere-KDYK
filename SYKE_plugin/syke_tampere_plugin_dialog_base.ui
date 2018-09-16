@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>382</width>
-    <height>586</height>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SYKE-pohjavesialueiden tuonti</string>
+   <string>SYKE groundwater data access</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -142,6 +142,42 @@
         </layout>
        </widget>
       </item>
+      <item>
+       <widget class="QGroupBox" name="groupBoxOldFeatureHandling">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="title">
+         <string>For all old target layer groundwater features:</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QRadioButton" name="radioButtonOldFeaturesExpire">
+           <property name="text">
+            <string>set end life span date if not already set</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButtonOldFeaturesDelete">
+           <property name="text">
+            <string>delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButtonOldFeaturesDoNothing">
+           <property name="text">
+            <string>do nothing</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -173,7 +209,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Pohjavesialueet / Lähde: SYKE, ELY-keskukset.</string>
+      <string>Groundwater features / Source: SYKE, ELY centers.</string>
      </property>
     </widget>
    </item>

@@ -90,7 +90,7 @@ class TampereSYKEPlugin:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&SYKE-pohjavesialueiden tuonti')
+        self.menu = self.tr(u'&SYKE groundwater data access')
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'TampereSYKEPlugin')
         self.toolbar.setObjectName(u'TampereSYKEPlugin')
@@ -211,7 +211,7 @@ class TampereSYKEPlugin:
         icon_path = ':/plugins/syke_tampere_plugin/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'SYKE-pohjavesialueiden tuonti'),
+            text=self.tr(u'SYKE groundwater data access'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -220,7 +220,7 @@ class TampereSYKEPlugin:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&SYKE-pohjavesialueiden tuonti'),
+                self.tr(u'&SYKE groundwater data access'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
@@ -230,6 +230,7 @@ class TampereSYKEPlugin:
         self.dlg.groupBoxChooseExistingLayer.setEnabled(state)
         self.dlg.groupBoxAddFeatures.setEnabled(state)
         self.dlg.groupBoxAddFields.setEnabled(state)
+        self.dlg.groupBoxOldFeatureHandling.setEnabled(state)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -279,6 +280,11 @@ class TampereSYKEPlugin:
 
                 QgsMessageLog.logMessage("self.exisingTargetLayerName: " + self.exisingTargetLayerName, "Tampere-KDYK-SYKE-plugin", Qgis.Info)
 
+                if self.dlg.radioButtonOldFeaturesExpire.isChecked():
+                    self.expireTargetLayerOldFeatures()
+                elif self.dlg.radioButtonOldFeaturesDelete.isChecked():
+                    self.deleteTargetLayerOldFeatures()
+
                 if self.dlg.radioButtonAddFromTampere.isChecked():
                     self.shouldAddFrom = 'Tampere'
                 elif self.dlg.radioButtonAddFromCanvasExtent.isChecked():
@@ -299,7 +305,7 @@ class TampereSYKEPlugin:
             self.importData()
 
     def importData(self):
-        self.getZip()
+        #self.getZip()
         self.copyDataFromSYKESHPToTamperePlan()
         self.addDataSourceReference()
 
@@ -345,7 +351,7 @@ class TampereSYKEPlugin:
         else:
             parsed_seconds = str(parsed_time.second)
 
-        return str(parsed_time.day) + '.' + str(parsed_time.month) + '.' + str(parsed_time.year) + ", klo " + parsed_hours + ':' + parsed_minutes + ':' + parsed_seconds + ' (UTC)'
+        return str(parsed_time.day) + '.' + str(parsed_time.month) + '.' + str(parsed_time.year) + self.tr(" at ") + parsed_hours + ':' + parsed_minutes + ':' + parsed_seconds + ' (UTC)'
 
     def getZip(self):
 
@@ -365,8 +371,10 @@ class TampereSYKEPlugin:
                 os.makedirs(dir_path)
             except OSError as exc:
                 QgsMessageLog.logMessage(str(exc.errno), "Tampere-KDYK-SYKE-plugin", QgsMessageLog.CRITICAL)
+                self.iface.messageBar().pushMessage(self.tr(u'Error creating folder to store the SYKE data'), Qgis.Error)
         if not os.path.exists(dir_path):
             QgsMessageLog.logMessage("Error creating folder to store the SYKE data", "Tampere-KDYK-SYKE-plugin", QgsMessageLog.CRITICAL)
+            self.iface.messageBar().pushMessage(self.tr(u'Error creating folder to store the SYKE data'), Qgis.Error)
 
         zip_url_parts = self.zip_url.split('/')
         file_name = zip_url_parts[-1]
@@ -613,4 +621,60 @@ class TampereSYKEPlugin:
 
         return newFeature
 
+    def expireTargetLayerOldFeatures(self):
 
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Setting life span end date for old groundwater features...'), Qgis.Info, 8)
+        #QCoreApplication.processEvents()
+        QgsApplication.processEvents()
+
+        targetLayer = QgsProject.instance().mapLayer(self.existingTargetLayerIDs[self.exisingTargetLayerIndex])
+
+        targetLayer.startEditing()
+
+        features = targetLayer.getFeatures()
+
+        QgsMessageLog.logMessage("starting to expireTargetLayerOldFeatures", "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+
+        for feature in features:
+            if feature['kayttotarkoitus_nimi'] == 'POHJAVESIALUE':
+                value = feature['version_loppumispvm']
+                QgsMessageLog.logMessage("version_loppumispvm: " + str(value), "Tampere-KDYK-SYKE-plugin", Qgis.Info)
+                if value == None:
+                    feature.setAttribute('version_loppumispvm', QDate.currentDate())
+                    targetLayer.updateFeature(feature)
+
+        targetLayer.commitChanges()
+        targetLayer.triggerRepaint()
+
+        self.iface.messageBar().clearWidgets()
+        self.iface.messageBar().pushMessage(self.tr(u'Finished setting life span end date for old groundwater features'), Qgis.Info, 8)
+    
+    def deleteTargetLayerOldFeatures(self):
+
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Deleting old groundwater features...'), Qgis.Info, 8)
+        #QCoreApplication.processEvents()
+        QgsApplication.processEvents()
+
+        targetLayer = QgsProject.instance().mapLayer(self.existingTargetLayerIDs[self.exisingTargetLayerIndex])
+
+        feature_ids = []
+
+        features = targetLayer.getFeatures()
+        for feature in features:
+            if feature['kayttotarkoitus_nimi'] == 'POHJAVESIALUE':
+                feature_ids.append(feature.id())
+        
+        if len(feature_ids) > 0:
+            success = targetLayer.dataProvider().deleteFeatures(feature_ids)
+        
+            targetLayer.updateExtents()
+            targetLayer.triggerRepaint()
+
+            self.iface.messageBar().clearWidgets()
+            if success:
+                self.iface.messageBar().pushMessage(self.tr(u'Succesfully deleted old groundwater features'), Qgis.Info, 8)
+            else:
+                self.iface.messageBar().pushMessage(self.tr(u'Failed to delete old groundwater features'), Qgis.Error, 8)
+        else:
+            self.iface.messageBar().clearWidgets()
+            self.iface.messageBar().pushMessage(self.tr(u'Old groundwater features were not found'), Qgis.Info, 8)
