@@ -299,7 +299,7 @@ class TampereSYKEPlugin:
             self.importData()
 
     def importData(self):
-        #self.getZip()
+        self.getZip()
         self.copyDataFromSYKESHPToTamperePlan()
         self.addDataSourceReference()
 
@@ -385,7 +385,7 @@ class TampereSYKEPlugin:
             zf.extractall(dir_path)
 
         self.iface.messageBar().clearWidgets()
-        self.iface.messageBar().pushMessage(self.tr(u'Data downloaded...'), Qgis.Info, 8)
+        self.iface.messageBar().pushMessage(self.tr(u'Data downloaded'), Qgis.Info, 8)
         #self.busy_indicator_dialog.hide()
 
 
@@ -429,7 +429,7 @@ class TampereSYKEPlugin:
     def addSYKEDataToExistingLayerFromTampere(self, goundWaterLayer, targetLayer):
         #tampereRect4326 = QgsRectangle.fromWkt("POLYGON((23.542288 61.836613, 24.118494 61.836613, 24.118494 61.427364, 23.542288 61.427364, 23.542288 61.836613))")
 
-        self.iface.messageBar().pushMessage(self.tr(u'A moment... Adding all SYKE groundwater features from Tampere municipality...'), Qgis.Info, 8)
+        self.iface.messageBar().pushMessage(self.tr(u'A moment... Adding SYKE groundwater features from Tampere municipality...'), Qgis.Info, 8)
         QgsApplication.processEvents()
 
         source_crs = QgsCoordinateReferenceSystem(4326)
@@ -562,8 +562,9 @@ class TampereSYKEPlugin:
                 field = QgsField(sName,  sourceTypes[i])
                 newAttribs.append(field)
 
-        targetLayer.dataProvider().addAttributes(newAttribs)
-        targetLayer.updateFields()
+        if len(newAttribs) > 0:
+            targetLayer.dataProvider().addAttributes(newAttribs)
+            targetLayer.updateFields()
 
     def createTargetFeatureFromSourceFeature(self, sourceLayer, sourceFeature, targetLayer):
         newFeature = QgsFeature()
