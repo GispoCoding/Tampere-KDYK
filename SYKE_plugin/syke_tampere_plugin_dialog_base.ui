@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>382</width>
-    <height>563</height>
+    <height>586</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -170,10 +170,18 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Pohjavesialueet / Lähde: SYKE, ELY-keskukset.</string>
+     </property>
+    </widget>
+   </item>
   </layout>
   <zorder>groupBox_3</zorder>
   <zorder>groupBox_2</zorder>
   <zorder>groupBox</zorder>
+  <zorder>label</zorder>
  </widget>
  <customwidgets>
   <customwidget>
