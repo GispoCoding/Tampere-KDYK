@@ -36,10 +36,6 @@ The tables in this scheme contain connections to the data that are needed in the
 
 This scheme helps in creating visualization of the database data. Since there can be several theme maps in the published zoning plan, there is a table for theming. There are also geometry tables and connecting tables.
 
-### yk_geoserver
-
-This provides views created from multiple tables used for visualization in GeoServer map layers.
-
 ### yk_suunnitteluparametrit
 
 The scheme contains parameters useful for carrying out the planning process correctly. A software should utilize these to help in the planning process.
@@ -55,3 +51,12 @@ Various codings especially related to INSPIRE ones that already exist but also o
 ### yk_inspire
 
 Tables to related to INSPIRE. When there are more than one land use class or supplementary regulation class for a zoning object then these might be used.
+
+### Views
+
+Though not shown in the database model diagram there are several views also defined for the database model. See the [database_model/2018-12-13-sqlviews.sql](database_model/2018-12-13-sqlviews.sql) script for their definitions.
+
+#### Note
+
+There used to be yk_geoserver scheme for GeoServer visualizations, but now the visualizations are more tied to the QGIS use. There could still be seperate views for GeoServer or the [Oskari platform](http://oskari.org/) that somewhat utilizes GeoServer if needed in future.
+
