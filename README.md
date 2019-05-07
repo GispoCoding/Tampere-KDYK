@@ -54,7 +54,7 @@ Tables to related to INSPIRE. When there are more than one land use class or sup
 
 ### Views
 
-Though not shown in the database model diagram there are several views also defined for the database model. See the [database_model/2018-12-13-sqlviews.sql](database_model/2018-12-13-sqlviews.sql) script for their definitions.
+Though not shown in the database model diagram there are several views also defined for the database model. See the [database_model/2019-04-17-sqlviews.sql](database_model/2019-04-17-sqlviews.sql) script for their definitions.
 
 #### Note
 
